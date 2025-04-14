@@ -3,7 +3,7 @@ import {CoreObject} from '../types/ModelTypes';
 class CoreModel {
 
     static table: string ;
-    #id: Number |undefined;
+    #id: number |undefined;
     created_at: Date |undefined;
     updated_at: Date |undefined;
 

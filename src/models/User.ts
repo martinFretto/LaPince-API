@@ -9,8 +9,8 @@ class User extends CoreModel {
     password: string;
     last_name: string | null;
     first_name: string | null;
-    total_budget: Number;
-    total_expenses: Number;
+    total_budget: number;
+    total_expenses: number;
 
     constructor (obj: UserObject){
         super(obj); 

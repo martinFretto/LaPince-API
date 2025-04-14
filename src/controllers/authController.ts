@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { User } from "../models/User";
 import { UserObject } from "../types/ModelTypes";
 import { hash, verify } from "../libs/crypto";
+import { generateToken } from "../libs/jwtToken";
+import { TokenPayloadType } from "../types/TokenPayloadType";
 
 
 export async function registerUser(req: Request, res: Response): Promise<void> {
@@ -69,6 +71,14 @@ export async function loginUser(req: Request, res: Response): Promise<void> {
 
     console.log("Mot de pass correcte, génération du jwt");
 
-
+    // Create authentication tokens
+    const tokenPayload: TokenPayloadType ={
+        id: user.id,
+        email: user.email
+    }
+    const jwtToken = generateToken(tokenPayload);
+  
+    res.status(201).json({ status: 201, message: "token généré", token: jwtToken});
+    return;
 
 }
