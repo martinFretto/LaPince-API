@@ -5,10 +5,10 @@ export interface CoreObject {
 }
 
 export interface UserObject extends CoreObject {
-    email: String,
-    password: String,
-    first_name: String | null,
-    last_name: String | null,  
+    email: string,
+    password: string,
+    first_name: string | null,
+    last_name: string | null,  
     total_budget: Number,
     total_expenses: Number
 } 
