@@ -1,12 +1,13 @@
 import { client } from '../database/client';
-import {CoreObject} from '../types/CoreObject';
+import {CoreObject } from '../types/ModelTypes';
 
 class CoreModel {
 
-    static table: String;
-    #id: Number;
-    created_at: Date;
-    updated_at: Date;
+    static table: String ;
+    #id: Number |undefined;
+    created_at: Date |undefined;
+    updated_at: Date |undefined;
+
 
     constructor(obj: CoreObject) {
         this.#id = obj.id;
