@@ -1,7 +1,2 @@
 node_modules
 .env
-PGHOST=localhost
-PGPORT=5432
-PGDATABASE=dbname
-PGUSER=dbuser
-PGPASSWORD=dbpassword
