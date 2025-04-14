@@ -1,5 +1,5 @@
 import { CoreModel } from './CoreModel';
-import { UserObject}  from '../types/ModelTypes'
+import { UserObject } from '../types/ModelTypes';
 import { client } from '../database/client';
 
 class User extends CoreModel {

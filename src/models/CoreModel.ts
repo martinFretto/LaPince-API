@@ -1,5 +1,5 @@
 import { client } from '../database/client';
-import { CoreObject } from '../../types/ModelTypes';
+import { CoreObject } from '../types/ModelTypes';
 
 class CoreModel {
 
