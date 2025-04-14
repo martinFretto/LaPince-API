@@ -1,8 +1,31 @@
 import { Request, Response } from "express";
 import { User } from "../models/User";
-import { UserObject } from "../../types/ModelTypes";
+import { UserObject } from "../types/ModelTypes";
+import Joi from "joi";
 
 
+// Schema de validation pour registerUser
+const registerSchema = Joi.object({
+    email: Joi.string()
+        .email()
+        .required()
+        .messages({
+            "string.email":"Le format de l'email est invalide.",
+            "any.required":"Le champ email est obligatoire."
+        
+    }),
+    password: Joi.string()
+        .pattern(/^(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]{8,}$/)
+        .required()
+        .messages({
+            "string.pattern.base": "Le mot de passe doit contenir au moins 8 caractères, dont 1 chiffre et 1 majuscule.",
+            "any.required": "Le champ password est obligatoire."
+        }),
+        first_name: Joi.string()
+            .optional(),
+        last_name: Joi.string()
+            .optional()
+});
 export async function registerUser(req: Request, res: Response) {
 
     console.log("register?")
@@ -14,11 +37,16 @@ export async function registerUser(req: Request, res: Response) {
     }
 
     /* VALIDATION JOI */
-
-
-
-    /******* */
-
+    const {error} = registerSchema.validate({email,password, first_name, last_name});
+    if (error) {
+        res.status(400).json({
+            message: "Validation échouée !",
+            détails: error.details.map((detail)=>detail.message)
+        });
+    }
+    console.log("email, password, first_name, last_name : ", email, password, first_name, last_name);
+   
+// Verification si un utilisateur avec cet email existe déjà
     const sameEmailUser = await User.findByEmail(email);
     console.log(sameEmailUser);
 
@@ -45,6 +73,26 @@ export async function loginUser(req: Request, res: Response) {
 
     const { email, password } = req.body;
 
-    //console.log("email, password : ", email, password)
+    // Validation des données avec Joi
+    const loginSchema = Joi.object({
+        email: Joi.string().email().required().messages({
+            "string.email": "Le format de l'email est invalide.",
+            "any.required": "Le champ email est obligatoire."
+        }),
+        password: Joi.string().required().messages({
+            "any.required": "Le champ password est obligatoire."
+        })
+    });
+
+    const { error } = loginSchema.validate({ email, password });
+        if (error) {
+            res.status(400).json({
+                message: "Validation échouée !",
+                details: error.details.map((detail) => detail.message)
+            });
+        }
+
+        console.log("email, password : ", email, password);
+
 }
 
