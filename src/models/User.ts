@@ -50,6 +50,23 @@ class User extends CoreModel {
         return user;
     }
 
+    static async findByEmail(email:String) {
+        const query = {
+            text: 'SELECT * FROM "' + this.table + '" WHERE email = $1',
+            values: [email],
+        };
+
+        const results = await client.query(query);
+
+        if (!results.rowCount) {
+            return null;
+        }
+
+        const user = new this(results.rows[0]);
+
+        return user;
+    }
+
   
 }
 
