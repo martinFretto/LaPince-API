@@ -5,12 +5,12 @@ import { client } from '../database/client';
 class User extends CoreModel {
     static table = 'user';
     
-    email: String;
-    password: String;
-    last_name: String | null;
-    first_name: String | null;
-    total_budget: Number;
-    total_expenses: Number;
+    email: string;
+    password: string;
+    last_name: string | null;
+    first_name: string | null;
+    total_budget: number;
+    total_expenses: number;
 
     constructor (obj: UserObject){
         super(obj); 
@@ -50,7 +50,7 @@ class User extends CoreModel {
         return user;
     }
 
-    static async findByEmail(email:String) {
+    static async findByEmail(email:string) {
         const query = {
             text: 'SELECT * FROM "' + this.table + '" WHERE email = $1',
             values: [email],

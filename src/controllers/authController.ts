@@ -51,27 +51,39 @@ export async function registerUser(req: Request, res: Response) {
     console.log(sameEmailUser);
 
     if (sameEmailUser){
-        res.status(409).json({ message: "Cet email est déjà utilisé!" }); 
+        res.status(409).json({status: 409, message: "Cet email est déjà utilisé!" }); 
     }
+    console.log("Password: ", password)
+
+    const hashedPassword: string = await hash(password);
+    if(hashedPassword==="error"){
+        res.status(500).json({status:500, message: "Une erreur est survenue lors du hashage votre mot de passe!" });
+        return; 
+    }
+
+    console.log("hashedPassword: ", hashedPassword)
+
     const userData: UserObject = {
         email: email,
-        password: password,
+        password: hashedPassword,
         first_name: first_name? first_name: null,
         last_name: last_name? last_name: null,
         total_budget: 0,  
         total_expenses: 0
     } 
 
-    await User.create(userData)
+    await User.create(userData);
 
 
-    res.status(201).json({ status: 201, message: "User created" });
+    res.status(201).json({ status: 201, message: "Utilisateur créé",  });
+    return;
 }
 
-export async function loginUser(req: Request, res: Response) {
+export async function loginUser(req: Request, res: Response): Promise<void> {
     //console.log("login?")
 
     const { email, password } = req.body;
+
 
     // Validation des données avec Joi
     const loginSchema = Joi.object({
@@ -93,6 +105,33 @@ export async function loginUser(req: Request, res: Response) {
         }
 
         console.log("email, password : ", email, password);
+        const user = await User.findByEmail(email);
+     
+        if (! user) { 
+            console.log("Cet utilisateur n'existe pas")
+            res.status(401).json({ status: 401, message: "Il y a une erreur dans vos identifiants" }); 
+            return;
+        }
+    
+        const correctPassword = await verify(user!.password, password);
+        if (correctPassword=="error") { 
+            res.status(500).json({ status: 500, message: "Une erreur est survenue lors de la vérification du mot de passe" });
+            return; 
+        } else if(!correctPassword){
+            res.status(401).json({ status: 401, message: "Il y a une erreur dans vos identifiants" }); 
+            return;
+        }
+    
+        console.log("Mot de pass correcte, génération du jwt");
+    
+        // Create authentication tokens
+        const tokenPayload: TokenPayloadType ={
+            id: user.id,
+            email: user.email
+        }
+        const jwtToken = generateToken(tokenPayload);
+      
+        res.status(201).json({ status: 201, message: "token généré", token: jwtToken});
+        return;
 
 }
-

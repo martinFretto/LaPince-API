@@ -1,10 +1,9 @@
-import { client } from '../database/client';
-import { CoreObject } from '../types/ModelTypes';
+import {CoreObject} from '../types/ModelTypes';
 
 class CoreModel {
 
-    static table: String ;
-    #id: Number |undefined;
+    static table: string ;
+    #id: number |undefined;
     created_at: Date |undefined;
     updated_at: Date |undefined;
 
@@ -21,8 +20,7 @@ class CoreModel {
 
     set id(newId) {
         this.#id = newId;
-    }
-    
+    }    
 
 }
 
