@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { User } from "../models/User";
 import { UserObject } from "../types/ModelTypes";
 import Joi from "joi";
+import argon2 from "argon2"
+import jwt from "jsonwebtoken"
 
 
 // Schema de validation pour registerUser
@@ -33,7 +35,7 @@ export async function registerUser(req: Request, res: Response) {
     const { email, password, first_name, last_name } = req.body;
 
     if(!email || !password){
-        res.status(400).json({message: "Les champs email et password sont obligatoire!" }); 
+        return res.status(400).json({message: "Les champs email et password sont obligatoire!" }); 
     }
 
     /* VALIDATION JOI */
@@ -55,7 +57,7 @@ export async function registerUser(req: Request, res: Response) {
     }
     console.log("Password: ", password)
 
-    const hashedPassword: string = await hash(password);
+    const hashedPassword: string = await argon2.hash(password);
     if(hashedPassword==="error"){
         res.status(500).json({status:500, message: "Une erreur est survenue lors du hashage votre mot de passe!" });
         return; 
@@ -113,7 +115,7 @@ export async function loginUser(req: Request, res: Response): Promise<void> {
             return;
         }
     
-        const correctPassword = await verify(user!.password, password);
+        const correctPassword = await argon2.verify(user!.password, password);
         if (correctPassword=="error") { 
             res.status(500).json({ status: 500, message: "Une erreur est survenue lors de la vérification du mot de passe" });
             return; 
@@ -125,6 +127,8 @@ export async function loginUser(req: Request, res: Response): Promise<void> {
         console.log("Mot de pass correcte, génération du jwt");
     
         // Create authentication tokens
+
+        
         const tokenPayload: TokenPayloadType ={
             id: user.id,
             email: user.email
