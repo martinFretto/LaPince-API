@@ -1,3 +1,4 @@
+
 export interface CoreObject {
     id?: number | undefined,
     created_at?: Date,
@@ -12,3 +13,4 @@ export interface UserObject extends CoreObject {
     total_budget: number,
     total_expenses: number
 } 
+
