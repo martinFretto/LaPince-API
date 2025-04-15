@@ -4,14 +4,8 @@ import { Expenditure } from "../models/Expenditure";
 import jwt from 'jsonwebtoken';
 
 export async function createExpenditure(req: Request, res: Response): Promise<void> {
-    console.log("createExpenditure params? ", req.params)
-    
+ 
     const { budget_id } = req.params;
-
-    console.log("BUDGETID: ", budget_id)
-
-
-
 
     const budget_id_for_db = Number(budget_id)
     const { description, payment_method, amount, date} = req.body;
@@ -51,4 +45,24 @@ export async function createExpenditure(req: Request, res: Response): Promise<vo
 
     res.status(201).json({ status: 201, message: "Dépense créée"});
     return;
+}
+
+export async function deleteExpenditure(req: Request, res: Response): Promise<void> {
+    
+    const { expenditure_id } = req.params;
+    const expenditure_id_for_db = Number(expenditure_id)
+
+    const expenditure = await Expenditure.findById(expenditure_id_for_db);
+
+    if(expenditure){
+        await expenditure.delete("expenditure");
+        res.status(204).json({ status: 204, message: "Dépense supprimée"});
+        return;
+    } else{
+        res.status(404).json({ status: 404, message: "Le dépense que vous voulez supprimer n'existe pas!"});
+        return;
+    }
+
+
+    
 }

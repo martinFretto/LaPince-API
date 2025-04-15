@@ -1,4 +1,5 @@
 import {CoreObject} from '../types/ModelTypes';
+import { client } from '../database/client';
 
 class CoreModel {
 
