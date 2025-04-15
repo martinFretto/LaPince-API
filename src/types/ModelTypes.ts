@@ -14,3 +14,13 @@ export interface UserObject extends CoreObject {
     total_expenses: number
 } 
 
+export interface BudgetObject extends CoreObject {
+    name: string,
+    warning_amount: number;
+    spent_amount: number;  
+    allocated_amount: number;
+    color: string;  
+    icon: string;
+    user_id: number
+}
+

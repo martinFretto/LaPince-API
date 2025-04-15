@@ -3,48 +3,45 @@ import { User } from "../models/User";
 import { UserObject } from "../types/ModelTypes";
 import Joi from "joi";
 import argon2 from "argon2"
-import jwt from "jsonwebtoken"
+import { generateToken } from "../libs/jwtToken";
+import { TokenPayloadType } from "../types/TokenPayloadType";
 
 
-// Schema de validation pour registerUser
-const registerSchema = Joi.object({
-    email: Joi.string()
-        .email()
-        .required()
-        .messages({
-            "string.email":"Le format de l'email est invalide.",
-            "any.required":"Le champ email est obligatoire."
-        
-    }),
-    password: Joi.string()
-        .pattern(/^(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]{8,}$/)
-        .required()
-        .messages({
-            "string.pattern.base": "Le mot de passe doit contenir au moins 8 caractères, dont 1 chiffre et 1 majuscule.",
-            "any.required": "Le champ password est obligatoire."
-        }),
-        first_name: Joi.string()
-            .optional(),
-        last_name: Joi.string()
-            .optional()
-});
+
 export async function registerUser(req: Request, res: Response) {
 
-    console.log("register?")
-    
     const { email, password, first_name, last_name } = req.body;
 
-    if(!email || !password){
-        return res.status(400).json({message: "Les champs email et password sont obligatoire!" }); 
-    }
-
+    // Schema de validation pour registerUser
+    const registerSchema = Joi.object({
+        email: Joi.string()
+            .email()
+            .required()
+            .messages({
+                "string.email":"Le format de l'email est invalide.",
+                "any.required":"Le champ email est obligatoire."
+            
+        }),
+        password: Joi.string()
+            .pattern(/^(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]{8,}$/)
+            .required()
+            .messages({
+                "string.pattern.base": "Le mot de passe doit contenir au moins 8 caractères, dont 1 chiffre et 1 majuscule.",
+                "any.required": "Le champ password est obligatoire."
+            }),
+            first_name: Joi.string()
+                .optional(),
+            last_name: Joi.string()
+                .optional()
+    });
     /* VALIDATION JOI */
     const {error} = registerSchema.validate({email,password, first_name, last_name});
     if (error) {
         res.status(400).json({
             message: "Validation échouée !",
-            détails: error.details.map((detail)=>detail.message)
+            details: error.details.map((detail)=>detail.message)
         });
+        return;
     }
     console.log("email, password, first_name, last_name : ", email, password, first_name, last_name);
    
@@ -54,6 +51,7 @@ export async function registerUser(req: Request, res: Response) {
 
     if (sameEmailUser){
         res.status(409).json({status: 409, message: "Cet email est déjà utilisé!" }); 
+        return;
     }
     console.log("Password: ", password)
 
@@ -114,26 +112,30 @@ export async function loginUser(req: Request, res: Response): Promise<void> {
             res.status(401).json({ status: 401, message: "Il y a une erreur dans vos identifiants" }); 
             return;
         }
-    
+        console.log("correct??")
         const correctPassword = await argon2.verify(user!.password, password);
-        if (correctPassword=="error") { 
+        console.log("correct password??")
+        if (typeof correctPassword === "boolean") {
+            if(!correctPassword){
+                res.status(401).json({ status: 401, message: "Il y a une erreur dans vos identifiants" }); 
+                return;
+            }
+        } else {
             res.status(500).json({ status: 500, message: "Une erreur est survenue lors de la vérification du mot de passe" });
             return; 
-        } else if(!correctPassword){
-            res.status(401).json({ status: 401, message: "Il y a une erreur dans vos identifiants" }); 
-            return;
         }
     
         console.log("Mot de pass correcte, génération du jwt");
     
         // Create authentication tokens
-
-        
+   
         const tokenPayload: TokenPayloadType ={
             id: user.id,
             email: user.email
         }
         const jwtToken = generateToken(tokenPayload);
+
+        console.log("jwttoken: ", jwtToken);
       
         res.status(201).json({ status: 201, message: "token généré", token: jwtToken});
         return;

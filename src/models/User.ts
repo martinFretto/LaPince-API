@@ -1,6 +1,6 @@
 import { CoreModel } from './CoreModel';
 import { UserObject } from '../types/ModelTypes';
-import { client } from '../database/client';
+import { db } from '../database/db';
 
 class User extends CoreModel {
     static table = 'user';
@@ -39,7 +39,7 @@ class User extends CoreModel {
             ],
         };
 
-        const result = await client.query(query);
+        const result = await db.query(query);
 
         if (!result.rowCount) {
             return null;
@@ -56,7 +56,7 @@ class User extends CoreModel {
             values: [email],
         };
 
-        const results = await client.query(query);
+        const results = await db.query(query);
 
         if (!results.rowCount) {
             return null;
