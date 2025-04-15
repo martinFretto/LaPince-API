@@ -19,8 +19,8 @@ export interface ExpenditureObject extends CoreObject {
     payment_method: string | null
     amount: number,
     date: Date | null,  
-    user_id?: number,
-    budget_id?: number
+    user_id: number,
+    budget_id: number
 } 
 
 export interface BudgetObject extends CoreObject {
