@@ -9,7 +9,6 @@ import { TokenPayloadType } from "../types/TokenPayloadType";
 
 
 export async function registerUser(req: Request, res: Response) {
-
     const { email, password, first_name, last_name } = req.body;
 
     // Schema de validation pour registerUser

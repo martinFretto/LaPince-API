@@ -1,6 +1,6 @@
 import { CoreModel } from './CoreModel';
 import { ExpenditureObject } from '../types/ModelTypes';
-import { client } from '../database/client';
+import { db } from '../database/client';
 
 class Expenditure extends CoreModel {
     static table = 'expenditure';
@@ -39,7 +39,7 @@ class Expenditure extends CoreModel {
             ],
         };
 
-        const result = await client.query(query);
+        const result = await db.query(query);
 
         if (!result.rowCount) {
             return null;
@@ -49,6 +49,7 @@ class Expenditure extends CoreModel {
 
         return user;
     }
+
 
 }
 
