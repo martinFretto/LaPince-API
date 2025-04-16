@@ -31,8 +31,8 @@ class Budget extends CoreModel {
     }
 
     async findById(id: number) {
-        const query = `SELECT * FROM ${Budget.table} WHERE id = $1`;
-        const result = await db.query(query, [id]);
+        const query = `SELECT * FROM ${Budget.table} WHERE id = $1 AND user_id = `;
+        const result = await db.query(query, [id], [user_id]);
         return result.rows[0];
     }
 
