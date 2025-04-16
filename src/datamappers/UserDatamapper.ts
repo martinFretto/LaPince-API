@@ -46,6 +46,7 @@ class UserDatamapper {
 
         return user;
     }
+
 }
 
 export {UserDatamapper}
