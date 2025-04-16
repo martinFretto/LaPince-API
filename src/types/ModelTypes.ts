@@ -1,6 +1,5 @@
-
 export interface CoreObject {
-    id?: number | undefined,
+    id?: number 
     created_at?: Date,
     updated_at?: Date
 }
@@ -12,6 +11,15 @@ export interface UserObject extends CoreObject {
     last_name: string | null,  
     total_budget: number,
     total_expenses: number
+}
+
+export interface ExpenditureObject extends CoreObject {
+    description: string | null
+    payment_method: string | null
+    amount: number,
+    date: Date | null,  
+    user_id: number,
+    budget_id: number
 } 
 
 export interface BudgetObject extends CoreObject {

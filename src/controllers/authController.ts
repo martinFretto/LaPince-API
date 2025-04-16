@@ -1,40 +1,45 @@
 import { Request, Response } from "express";
-import { User } from "../models/User";
+import { UserDatamapper } from "../datamappers/UserDatamapper";
 import { UserObject } from "../types/ModelTypes";
+import { TokenPayloadType } from "../types/TokenPayloadType";
+import { generateToken } from "../libs/jwtToken";
 import Joi from "joi";
 import argon2 from "argon2"
-import { generateToken } from "../libs/jwtToken";
-import { TokenPayloadType } from "../types/TokenPayloadType";
-
 
 
 export async function registerUser(req: Request, res: Response) {
 
+    //Récupération des données du formulaire
     const { email, password, first_name, last_name } = req.body;
 
-    // Schema de validation pour registerUser
+    //Création d'un schéma: format de données pour l'email et le password
     const registerSchema = Joi.object({
         email: Joi.string()
             .email()
             .required()
+            .empty('')
             .messages({
                 "string.email":"Le format de l'email est invalide.",
-                "any.required":"Le champ email est obligatoire."
+                "any.required":"Le champ email est obligatoire.",
+                "string.empty":"Le champ email est obligatoire."
             
         }),
         password: Joi.string()
             .pattern(/^(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]{8,}$/)
             .required()
+            .empty('')
             .messages({
                 "string.pattern.base": "Le mot de passe doit contenir au moins 8 caractères, dont 1 chiffre et 1 majuscule.",
-                "any.required": "Le champ password est obligatoire."
+                "any.required": "Le champ password est obligatoire.",
+                "string.empty":"Le champ password est obligatoire."
             }),
             first_name: Joi.string()
                 .optional(),
             last_name: Joi.string()
                 .optional()
     });
-    /* VALIDATION JOI */
+
+    //Vérification de la validité des données, réponse 400 avec un message personnalisé en cas d'échec
     const {error} = registerSchema.validate({email,password, first_name, last_name});
     if (error) {
         res.status(400).json({
@@ -43,25 +48,26 @@ export async function registerUser(req: Request, res: Response) {
         });
         return;
     }
-    console.log("email, password, first_name, last_name : ", email, password, first_name, last_name);
-   
-// Verification si un utilisateur avec cet email existe déjà
-    const sameEmailUser = await User.findByEmail(email);
-    console.log(sameEmailUser);
+
+    // On vérifie si un utilisateur avec cet email existe déjà
+    const sameEmailUser = await UserDatamapper.findByEmail(email);
+    console.log("sameEmail:user: ", sameEmailUser);
 
     if (sameEmailUser){
         res.status(409).json({status: 409, message: "Cet email est déjà utilisé!" }); 
         return;
     }
-    console.log("Password: ", password)
 
     const hashedPassword: string = await argon2.hash(password);
+
+    console.log("hashedPassword: ", hashedPassword);
+
     if(hashedPassword==="error"){
         res.status(500).json({status:500, message: "Une erreur est survenue lors du hashage votre mot de passe!" });
         return; 
     }
 
-    console.log("hashedPassword: ", hashedPassword)
+  
 
     const userData: UserObject = {
         email: email,
@@ -72,72 +78,77 @@ export async function registerUser(req: Request, res: Response) {
         total_expenses: 0
     } 
 
-    await User.create(userData);
+    const newUser = await UserDatamapper.create(userData);
 
-
-    res.status(201).json({ status: 201, message: "Utilisateur créé",  });
-    return;
+    //On vérifie bien qu'il n'y a pas eu d'erreur lors de l'insertion en BDD
+    if(newUser){
+        res.status(201).json({ status: 201, message: "Utilisateur créé"});
+        return;
+    } else {
+        res.status(500).json({status:500, message: "Une erreur est survenue lors de la création de l'utilisateur" });
+        return;
+    }
 }
 
 export async function loginUser(req: Request, res: Response): Promise<void> {
-    //console.log("login?")
-
+    console.log("login user");
     const { email, password } = req.body;
+    console.log("email, password ", email, password)
 
-
-    // Validation des données avec Joi
+    //Création d'un schéma: format de données pour l'email et le password
     const loginSchema = Joi.object({
-        email: Joi.string().email().required().messages({
+        email: Joi.string().email().empty('').required().messages({
             "string.email": "Le format de l'email est invalide.",
-            "any.required": "Le champ email est obligatoire."
+            "any.required": "Le champ email est obligatoire.",
+            "string.empty": "Le champ email est obligatoire."
         }),
-        password: Joi.string().required().messages({
-            "any.required": "Le champ password est obligatoire."
+        password: Joi.string().empty('').required().messages({
+            "any.required": "Le champ password est obligatoire.",
+            "string.empty": "Le champ email est obligatoire."
         })
     });
 
+    //Vérification de la validité des données, réponse 400 avec un message personnalisé en cas d'échec
     const { error } = loginSchema.validate({ email, password });
-        if (error) {
-            res.status(400).json({
-                message: "Validation échouée !",
-                details: error.details.map((detail) => detail.message)
-            });
-        }
+    if (error) {
+        res.status(400).json({
+            message: "Validation échouée !",
+            details: error.details.map((detail) => detail.message)
+        });
+    }
+    
+    //On va vérifier qu'un utilisateur avec cet email existe
+    const user = await UserDatamapper.findByEmail(email);
+    if (! user) { 
+        //Ici l'email n'existe pas dans la BDD. Pour des raisons de sécurité, on ne le précisera pas dans la réponse
+        res.status(401).json({ status: 401, message: "Il y a une erreur dans vos identifiants" }); 
+        return;
+    }
 
-        console.log("email, password : ", email, password);
-        const user = await User.findByEmail(email);
-     
-        if (! user) { 
-            console.log("Cet utilisateur n'existe pas")
+    //On compare le password saisi avec celui en BDD 
+    //Si le password est bon, la fonction verify renvoie true, s'il est faux, elle renvoie false. 
+    //En cas d'erreur, elle revoie la chaine de caractère "error"
+    const correctPassword = await argon2.verify(user!.password, password);
+    if (typeof correctPassword === "boolean") {
+        if(!correctPassword){
             res.status(401).json({ status: 401, message: "Il y a une erreur dans vos identifiants" }); 
             return;
         }
-        console.log("correct??")
-        const correctPassword = await argon2.verify(user!.password, password);
-        console.log("correct password??")
-        if (typeof correctPassword === "boolean") {
-            if(!correctPassword){
-                res.status(401).json({ status: 401, message: "Il y a une erreur dans vos identifiants" }); 
-                return;
-            }
-        } else {
-            res.status(500).json({ status: 500, message: "Une erreur est survenue lors de la vérification du mot de passe" });
-            return; 
-        }
-    
-        console.log("Mot de pass correcte, génération du jwt");
-    
-        // Create authentication tokens
-   
-        const tokenPayload: TokenPayloadType ={
-            id: user.id,
-            email: user.email
-        }
-        const jwtToken = generateToken(tokenPayload);
+    } else {
+        res.status(500).json({ status: 500, message: "Une erreur est survenue lors de la vérification du mot de passe" });
+        return; 
+    }
 
-        console.log("jwttoken: ", jwtToken);
-      
-        res.status(201).json({ status: 201, message: "token généré", token: jwtToken});
-        return;
+    //Arrivé ici, le mail et le password sont corrects, on passe à la génération du token jwt
+    console.log("user id?: ", user.id)
+    const tokenPayload: TokenPayloadType ={
+        id: user.id,
+        email: user.email
+    }
+    const jwtToken = generateToken(tokenPayload);
 
+    console.log("jwttoken: ", jwtToken);
+  
+    res.status(201).json({ status: 201, message: "token généré", token: jwtToken});
+    return;
 }
