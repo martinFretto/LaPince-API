@@ -32,6 +32,6 @@ export function getUserIdInToken(req: AuthenticatedRequest): number{
     (req.token!,
         process.env.JWT_SECRET as jwt.Secret) as jwt.JwtPayload;
     const user_id = decoded.user.id;
-    const user_id_for_db = parseInt(user_id);
+    const user_id_for_db = Number(user_id);
 	return user_id_for_db;
 }
