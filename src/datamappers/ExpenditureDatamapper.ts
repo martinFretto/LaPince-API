@@ -1,4 +1,4 @@
-import { client } from "../database/client";
+import { db } from "../database/db";
 import { Expenditure } from "../models/Expenditure";
 import { ExpenditureObject } from "../types/ModelTypes";
 
@@ -12,7 +12,7 @@ class ExpenditureDatamapper {
                 values: [id, user_id],
             };
     
-            const results = await client.query(query);
+            const results = await db.query(query);
     
             if (!results.rowCount) {
                 return null;
@@ -31,7 +31,7 @@ class ExpenditureDatamapper {
             values: [budget_id, user_id],
         };
 
-        const results = await client.query(query);
+        const results = await db.query(query);
 
         if (!results.rowCount) {
             return null;
@@ -66,7 +66,7 @@ class ExpenditureDatamapper {
             ],
         };
 
-        const result = await client.query(query);
+        const result = await db.query(query);
 
         if (!result.rowCount) {
             return null;
@@ -96,7 +96,7 @@ class ExpenditureDatamapper {
             ],
         };
 
-        const result = await client.query(query);
+        const result = await db.query(query);
 
         if (!result.rowCount) {
             return null;
@@ -114,7 +114,7 @@ class ExpenditureDatamapper {
                 values: [expenditure.id],
             };
     
-            await client.query(query);
+            await db.query(query);
     
             return true;
         } catch(error){

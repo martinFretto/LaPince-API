@@ -1,4 +1,4 @@
-import { client } from "../database/client";
+import { db } from "../database/db";
 import { User } from "../models/User";
 import { UserObject } from "../types/ModelTypes";
 
@@ -9,7 +9,7 @@ class UserDatamapper {
             values: [email],
         };
 
-        const results = await client.query(query);
+        const results = await db.query(query);
 
         if (!results.rowCount) {
             return null;
@@ -36,7 +36,7 @@ class UserDatamapper {
             ],
         };
 
-        const result = await client.query(query);
+        const result = await db.query(query);
 
         if (!result.rowCount) {
             return null;
