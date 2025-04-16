@@ -20,6 +20,7 @@ class CoreModel{
 }
 export {CoreModel}
 
+
 /*import {CoreObject} from '../types/ModelTypes';
 import { client } from '../database/client';
 
@@ -49,16 +50,8 @@ class CoreModel {
     set id(newId) {
         this.#id = newId;
     }  
-<<<<<<< HEAD
     /*
     static async findById(id: number) {
-=======
-
-    
-
-    static async findById<T extends CoreModel>(this: StaticModel<T>, id: number): Promise<T | null> {
- 
->>>>>>> ab8f8e8 (mise en place d'un Datamapper, CRUD complet des dépenses)
         const query = {
             text: `SELECT * FROM "${this.table}" WHERE id = $1;`,
             values: [id],
@@ -89,3 +82,4 @@ class CoreModel {
 }
 
 export { CoreModel };*/
+

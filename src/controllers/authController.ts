@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { UserDatamapper } from "../datamappers/userDatamapper";
+import { UserDatamapper } from "../datamappers/UserDatamapper";
 import { UserObject } from "../types/ModelTypes";
 import { TokenPayloadType } from "../types/TokenPayloadType";
 import { generateToken } from "../libs/jwtToken";

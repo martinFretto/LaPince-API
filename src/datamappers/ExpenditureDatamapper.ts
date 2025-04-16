@@ -2,13 +2,14 @@ import { client } from "../database/client";
 import { Expenditure } from "../models/Expenditure";
 import { ExpenditureObject } from "../types/ModelTypes";
 
-class expenditureDatamapper {
+class ExpenditureDatamapper {
 
-    static async findById(id: number): Promise<Expenditure| null> {
-     
+    static async findById(id: number, user_id: number): Promise<Expenditure| null> {
+            //L'id est suffisant pour la requête
+            //Mais on vérifie que la dépense demandée  appartient bien à l'utilisateur authentifié
             const query = {
-                text: `SELECT * FROM "expenditure" WHERE id = $1;`,
-                values: [id],
+                text: `SELECT * FROM "expenditure" WHERE id = $1 and user_id= $2;`,
+                values: [id, user_id],
             };
     
             const results = await client.query(query);
@@ -22,16 +23,17 @@ class expenditureDatamapper {
             return expenditure;
     }
 
-    static async findByBudget(budget_id: number): Promise<Expenditure[]|null> {
+    static async findByBudget(budget_id: number, user_id: number): Promise<Expenditure[]|null> {
+        //Le Budget_ID est suffisant pour la requête
+        //Mais on vérifie que le budget appartient bien à l'utilisateur authentifié
         const query = {
-            text: `SELECT * FROM "expenditure" WHERE budget_id= $1;`,
-            values: [budget_id],
+            text: `SELECT * FROM "expenditure" WHERE budget_id= $1 and user_id= $2;`,
+            values: [budget_id, user_id],
         };
 
         const results = await client.query(query);
 
         if (!results.rowCount) {
-            console.log("ici")
             return null;
         }
 
@@ -121,4 +123,4 @@ class expenditureDatamapper {
     }
 }
 
-export {expenditureDatamapper}
+export {ExpenditureDatamapper}
