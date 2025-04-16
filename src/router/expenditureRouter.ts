@@ -4,7 +4,6 @@ import { authMiddleware } from "../middlewares/authMiddleware";
 
 const expenditureRouter = Router();
 
-
 expenditureRouter.get("/budgets/:budget_id/expenses/", authMiddleware, expenditureController.getExpendituresByBudget);
 
 expenditureRouter.get("/budgets/:budget_id/expenses/:expenditure_id", authMiddleware, expenditureController.getOneExpenditure);

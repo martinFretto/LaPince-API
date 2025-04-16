@@ -11,7 +11,7 @@ CREATE TABLE "user" (
     "total_budget" DECIMAL(10,2) NOT NULL DEFAULT 0,
     "total_expenses" DECIMAL(10,2) NOT NULL DEFAULT 0,
     "created_at" TIMESTAMPTZ NOT NULL default(NOW()),
-    "updated_at" TIMESTAMPTZ NULL
+    "updated_at" TIMESTAMPTZ NOT NULL default(NOW())
 );
 
 
@@ -25,7 +25,7 @@ CREATE TABLE "budget" (
     "icon" VARCHAR(255),
     "user_id" INT NOT NULL REFERENCES "user"("id"),
     "created_at" TIMESTAMPTZ NOT NULL default(NOW()),
-    "updated_at" TIMESTAMPTZ NULL
+    "updated_at" TIMESTAMPTZ NOT NULL default(NOW())
 );
 
 
@@ -37,8 +37,8 @@ CREATE TABLE "expenditure" (
   "date" DATE,
   "user_id" INT NOT NULL REFERENCES "user"("id"),
   "budget_id" INT NOT NULL REFERENCES "budget"("id"),
-  "created_at" TIMESTAMPTZ NOT NULL default(now()),
-  "updated_at" TIMESTAMPTZ
+  "created_at" TIMESTAMPTZ NOT NULL default(NOW()),
+  "updated_at" TIMESTAMPTZ NOT NULL default(NOW())
 );
 
 COMMIT;

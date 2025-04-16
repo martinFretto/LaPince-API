@@ -47,12 +47,28 @@ async function getBudgetById(req: AuthenticatedRequest, res: Response): Promise<
         // On récupère l'id depuis les paramètre de la requete puis on l'affiche dans les logs
         const { id } = req.params;
         console.log("ID:",id);
+
+        // Decodage du token avec une clé secrète
+        const decoded = jwt.verify
+
+        ("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoiYm9iYnlAb2Nsb2NrLmlvIiwiaWQiOjJ9LCJpYXQiOjE3NDQ3MTc2OTMsImV4cCI6MTc0NDcxODg5M30.tk0pA6wwWRqe5Ax6DL0RXA3eXwJ7-zXoybeU289aEo4",
+            process.env.JWT_SECRET as jwt.Secret) as jwt.JwtPayload;
+
+            //Extraire l'id utilisateur du token décodé puis l'affiché dans les logs
+        const user_id = decoded.user.id;
+        console.log("user_id???: ", user_id)
+        const token=""
+
+        //On convertit l'id utilisateur en type number puis on verifie avec les logs
+        const user_id_for_db= parseInt(user_id);
+
         //Requete pour rechercher un budget selon son id
-        const budget = await Budget.prototype.findById(parseInt(id));
+        const budget = await Budget.prototype.findById(parseInt(id),  user_id_for_db);
 
         if (!budget) {
             // Si aucun budget n'est trouvé retourné une reponse avec un message.
             res.status(404).json({ status: 404, message: "Budget introuvable." });
+            return;
         }
         // Retourne le budget trouvé
         res.status(200).json({ status: 200, data: budget });
