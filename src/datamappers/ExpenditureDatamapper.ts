@@ -73,7 +73,7 @@ class ExpenditureDatamapper {
         }
 
         const expenditure = new Expenditure(result.rows[0]);
-        await this.updateBudgetAfterExpenditure(expenditure.budget_id);
+        await this.updateBudgetAndUserAfterExpenditure(expenditure.budget_id);
 
         return expenditure;
     }
@@ -98,7 +98,7 @@ class ExpenditureDatamapper {
         };
 
         const result = await db.query(query);
-        await this.updateBudgetAfterExpenditure(dataObj.budget_id);
+        await this.updateBudgetAndUserAfterExpenditure(dataObj.budget_id);
 
         if (!result.rowCount) {
             return null;
@@ -118,7 +118,7 @@ class ExpenditureDatamapper {
     
             await db.query(query);
 
-            await this.updateBudgetAfterExpenditure(expenditure.budget_id);
+            await this.updateBudgetAndUserAfterExpenditure(expenditure.budget_id);
     
             return true;
         } catch(error){
@@ -126,8 +126,8 @@ class ExpenditureDatamapper {
         }      
     }
 
-    static async updateBudgetAfterExpenditure(budget_id:number){
-        const query = {
+    static async updateBudgetAndUserAfterExpenditure(budget_id:number){
+        const budgetQuery = {
             text: ` Update "budget" 
                     SET spent_amount = 
                     (SELECT COALESCE(SUM(amount), 0)
@@ -137,7 +137,19 @@ class ExpenditureDatamapper {
             values: [budget_id],
         };
 
-        await db.query(query);
+        await db.query(budgetQuery);
+
+        const userQuery = {
+            text: ` Update "user" 
+                    SET total_expenses = 
+                    (SELECT COALESCE(SUM(amount), 0)
+                    FROM expenditure
+                    WHERE user_id = $1)
+                    WHERE id = $1;`,
+            values: [budget_id],
+        };
+
+        await db.query(userQuery);
 
         return;
     }
