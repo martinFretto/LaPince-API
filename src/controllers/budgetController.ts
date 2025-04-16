@@ -57,6 +57,7 @@ async function createBudget(req: Request, res: Response): Promise<void> {
                 status: 400,
                 message: "Les champs name, allocated_amount, et user_id sont obligatoires.",
             });
+            return;
         }
 
         const newBudget: BudgetObject = {
@@ -64,8 +65,8 @@ async function createBudget(req: Request, res: Response): Promise<void> {
             warning_amount: parseFloat(warning_amount) || 0,
             spent_amount: parseFloat(spent_amount) || 0,
             allocated_amount: parseFloat(allocated_amount),
-            color: color || "default",
-            icon: icon || "default",
+            color: color || null,
+            icon: icon || null,
             user_id: parseInt(user_id),
         };
 
@@ -87,6 +88,7 @@ async function updateBudget(req: Request, res: Response): Promise<void> {
                 status: 400,
                 message: "Veuillez fournir au moins un champ à mettre à jour.",
             });
+            return;
         }
 
         const updates: Partial<BudgetObject> = {
@@ -103,12 +105,14 @@ async function updateBudget(req: Request, res: Response): Promise<void> {
         if (!updatedBudget) {
             res.status(404).json({ status: 404, message: "Budget introuvable." });
         }
+    
 
         res.status(200).json({ status: 200, message: "Budget mis à jour avec succès.", data: updatedBudget });
     } catch (error) {
         console.error("Erreur dans updateBudget :", error);
         res.status(500).json({ status: 500, message: "Une erreur serveur s'est produite." });
     }
+    return;
 }
 
 async function deleteBudget(req: Request, res: Response): Promise<void> {
@@ -126,6 +130,7 @@ async function deleteBudget(req: Request, res: Response): Promise<void> {
         console.error("Erreur dans deleteBudget :", error);
         res.status(500).json({ status: 500, message: "Une erreur serveur s'est produite." });
     }
+    return;
 }
 
 export { getAllBudgets, getBudgetById, createBudget, updateBudget, deleteBudget };
