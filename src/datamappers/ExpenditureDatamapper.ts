@@ -128,7 +128,7 @@ class ExpenditureDatamapper {
 
     static async updateBudgetAndUserAfterExpenditure(budget_id:number){
         const budgetQuery = {
-            text: ` Update "budget" 
+            text: ` UPDATE "budget" 
                     SET spent_amount = 
                     (SELECT COALESCE(SUM(amount), 0)
                     FROM expenditure
