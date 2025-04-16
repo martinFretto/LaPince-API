@@ -1,6 +1,30 @@
-import { CoreModel } from './CoreModel';
+import { ExpenditureObject } from "../types/ModelTypes";
+import { CoreModel } from "./CoreModel";
+
+class Expenditure extends CoreModel {
+    description: string | null;
+    payment_method: string | null;
+    amount: number;
+    date: Date | null;
+    user_id: number;
+    budget_id: number;
+
+    constructor (obj: ExpenditureObject){
+        super(obj); 
+        this.description= obj.description;
+        this.payment_method = obj.payment_method;
+        this.amount = obj.amount;
+        this.date = obj.date;
+        this.user_id = obj.user_id;
+        this.budget_id = obj.budget_id;     
+    }
+}
+
+export { Expenditure };
+
+/*import { CoreModel } from './CoreModel';
 import { ExpenditureObject } from '../types/ModelTypes';
-import { db } from '../database/client';
+import { client } from '../database/client';
 
 class Expenditure extends CoreModel {
     static table = 'expenditure';
@@ -39,7 +63,7 @@ class Expenditure extends CoreModel {
             ],
         };
 
-        const result = await db.query(query);
+        const result = await client.query(query);
 
         if (!result.rowCount) {
             return null;
@@ -50,7 +74,11 @@ class Expenditure extends CoreModel {
         return user;
     }
 
+    async update(tableName: string) {
+
+    }
+
 
 }
 
-export { Expenditure };
+*/

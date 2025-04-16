@@ -4,14 +4,14 @@ import * as expenditureController from '../controllers/expenditureController';
 const expenditureRouter = Router();
 
 
-//expenditureRouter.get("/", expenditureController.getExpenditures);
+expenditureRouter.get("/budgets/:budget_id/expenses/", expenditureController.getExpendituresByBudget);
 
-//expenditureRouter.get("/:expenditure_id", expenditureController.getExpenditureById);
+expenditureRouter.get("/budgets/:budget_id/expenses/:expenditure_id", expenditureController.getOneExpenditure);
 
 expenditureRouter.post("/budgets/:budget_id/expenses/", expenditureController.createExpenditure);
 
-//expenditureRouter.patch("/:expenditure_id", expenditureController.updateExpenditure);
+expenditureRouter.patch("/budgets/:budget_id/expenses/:expenditure_id", expenditureController.updateExpenditure);
 
-//expenditureRouter.delete("/:expenditure_id", expenditureController.deleteExpenditure);
+expenditureRouter.delete("/budgets/:budget_id/expenses/:expenditure_id", expenditureController.deleteExpenditure);
 
 export {expenditureRouter}
