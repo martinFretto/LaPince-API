@@ -5,6 +5,8 @@ import { catchErrors } from "../middlewares/catchErrors";
 
 const expenditureRouter = Router();
 
+expenditureRouter.get("/expenses/", authMiddleware, catchErrors(expenditureController.getAllExpenditures));
+
 expenditureRouter.get("/budgets/:budget_id/expenses/", authMiddleware, catchErrors(expenditureController.getExpendituresByBudget));
 
 expenditureRouter.get("/budgets/:budget_id/expenses/:expenditure_id", authMiddleware, catchErrors(expenditureController.getOneExpenditure));
