@@ -3,41 +3,14 @@ import { UserDatamapper } from "../datamappers/UserDatamapper";
 import { UserObject } from "../types/ModelTypes";
 import { TokenPayloadType } from "../types/TokenPayloadType";
 import { generateToken } from "../libs/jwtToken";
-import Joi from "joi";
 import argon2 from "argon2"
+import { loginSchema, registerSchema } from "../libs/validationSchemas";
 
 
 export async function registerUser(req: Request, res: Response) {
 
     //Récupération des données du formulaire
     const { email, password, first_name, last_name } = req.body;
-
-    //Création d'un schéma: format de données pour l'email et le password
-    const registerSchema = Joi.object({
-        email: Joi.string()
-            .email()
-            .required()
-            .empty('')
-            .messages({
-                "string.email":"Le format de l'email est invalide.",
-                "any.required":"Le champ email est obligatoire.",
-                "string.empty":"Le champ email est obligatoire."
-            
-        }),
-        password: Joi.string()
-            .pattern(/^(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]{8,}$/)
-            .required()
-            .empty('')
-            .messages({
-                "string.pattern.base": "Le mot de passe doit contenir au moins 8 caractères, dont 1 chiffre et 1 majuscule.",
-                "any.required": "Le champ password est obligatoire.",
-                "string.empty":"Le champ password est obligatoire."
-            }),
-            first_name: Joi.string()
-                .optional(),
-            last_name: Joi.string()
-                .optional()
-    });
 
     //Vérification de la validité des données, réponse 400 avec un message personnalisé en cas d'échec
     const {error} = registerSchema.validate({email,password, first_name, last_name});
@@ -51,7 +24,6 @@ export async function registerUser(req: Request, res: Response) {
 
     // On vérifie si un utilisateur avec cet email existe déjà
     const sameEmailUser = await UserDatamapper.findByEmail(email);
-    console.log("sameEmail:user: ", sameEmailUser);
 
     if (sameEmailUser){
         res.status(409).json({status: 409, message: "Cet email est déjà utilisé!" }); 
@@ -60,14 +32,10 @@ export async function registerUser(req: Request, res: Response) {
 
     const hashedPassword: string = await argon2.hash(password);
 
-    console.log("hashedPassword: ", hashedPassword);
-
     if(hashedPassword==="error"){
         res.status(500).json({status:500, message: "Une erreur est survenue lors du hashage votre mot de passe!" });
         return; 
     }
-
-  
 
     const userData: UserObject = {
         email: email,
@@ -91,22 +59,7 @@ export async function registerUser(req: Request, res: Response) {
 }
 
 export async function loginUser(req: Request, res: Response): Promise<void> {
-    console.log("login user");
     const { email, password } = req.body;
-    console.log("email, password ", email, password)
-
-    //Création d'un schéma: format de données pour l'email et le password
-    const loginSchema = Joi.object({
-        email: Joi.string().email().empty('').required().messages({
-            "string.email": "Le format de l'email est invalide.",
-            "any.required": "Le champ email est obligatoire.",
-            "string.empty": "Le champ email est obligatoire."
-        }),
-        password: Joi.string().empty('').required().messages({
-            "any.required": "Le champ password est obligatoire.",
-            "string.empty": "Le champ email est obligatoire."
-        })
-    });
 
     //Vérification de la validité des données, réponse 400 avec un message personnalisé en cas d'échec
     const { error } = loginSchema.validate({ email, password });
@@ -140,7 +93,6 @@ export async function loginUser(req: Request, res: Response): Promise<void> {
     }
 
     //Arrivé ici, le mail et le password sont corrects, on passe à la génération du token jwt
-    console.log("user id?: ", user.id)
     const tokenPayload: TokenPayloadType ={
         id: user.id,
         email: user.email

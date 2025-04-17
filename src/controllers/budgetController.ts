@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import Joi from "joi";
 import { getUserIdInToken } from "../libs/jwtToken";
 import { BudgetDatamapper } from "../datamappers/BudgetDatamapper";
 import { BudgetObject } from "../types/ModelTypes";
+import { budgetSchema } from "../libs/validationSchemas";
 
 interface AuthenticatedRequest extends Request {
     token?: string;
@@ -37,16 +37,7 @@ export async function getBudgetById(req: AuthenticatedRequest, res: Response): P
 export async function createBudget(req: AuthenticatedRequest, res: Response): Promise<void> {
     const user_id_for_db = getUserIdInToken(req);
 
-    const schema = Joi.object({
-        name: Joi.string().max(255).required(),
-        warning_amount: Joi.number().min(0).required(),
-        spent_amount: Joi.number().min(0).optional(),
-        allocated_amount: Joi.number().min(0).required(),
-        color: Joi.string().max(255).optional(),
-        icon: Joi.string().max(255).optional(),
-    });
-
-    const { error } = schema.validate(req.body);
+    const { error } = budgetSchema.validate(req.body);
     if (error) {
         res.status(400).json({
             message: "Validation échouée.",
@@ -88,16 +79,7 @@ export async function updateBudget(req: AuthenticatedRequest, res: Response): Pr
         return;
     }
 
-    const schema = Joi.object({
-        name: Joi.string().max(255).optional(),
-        warning_amount: Joi.number().min(0).optional(),
-        spent_amount: Joi.number().min(0).optional(),
-        allocated_amount: Joi.number().min(0).optional(),
-        color: Joi.string().max(255).optional(),
-        icon: Joi.string().max(255).optional(),
-    }).options({ allowUnknown: true });
-
-    const { error } = schema.validate(req.body);
+    const { error } = budgetSchema.validate(req.body);
     if (error) {
         res.status(400).json({
             message: "Validation échouée.",

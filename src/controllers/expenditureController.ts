@@ -3,6 +3,7 @@ import { ExpenditureObject } from "../types/ModelTypes";
 import { ExpenditureDatamapper } from "../datamappers/ExpenditureDatamapper";
 import Joi from 'joi';
 import { getUserIdInToken } from "../libs/jwtToken";
+import { amountSchema } from "../libs/validationSchemas";
 
 interface AuthenticatedRequest extends Request {
     token?: string;
@@ -32,7 +33,6 @@ export async function getExpendituresByBudget(req: AuthenticatedRequest, res: Re
 export async function getOneExpenditure(req: AuthenticatedRequest, res: Response): Promise<void> {
      //le budget_id se trouve dans le endpoint (route paramétrée) "/budgets/:budget_id/expenses"
     const { expenditure_id } = req.params;
-    console.log("expenditure_id", expenditure_id)
 
     //On récupère l'id de l'utilisateur dans le token
     const user_id_for_db = getUserIdInToken(req);
@@ -41,7 +41,7 @@ export async function getOneExpenditure(req: AuthenticatedRequest, res: Response
     //Ce qui vient du token est de la route est au format string, on veut des number 
     const expenditure_id_for_db = Number(expenditure_id)
     const expenditure = await ExpenditureDatamapper.findById(expenditure_id_for_db, user_id_for_db);
-    console.log("expenditure?: ", expenditure)
+
     if(expenditure){
         res.status(200).json({ status: 200, data: expenditure});
         return;
@@ -61,7 +61,8 @@ export async function createExpenditure(req: AuthenticatedRequest, res: Response
     const { budget_id } = req.params;
     //le reste est dans le body
     const { description, payment_method, amount, date} = req.body;
-    const amount_for_db = Number(amount)
+   // const amount_for_db = Number(amount)
+    const amount_for_db = Number(amount.replace(',','.'))
     
     let date_for_db: Date | null;
     if(date){
@@ -73,25 +74,6 @@ export async function createExpenditure(req: AuthenticatedRequest, res: Response
     //on convertit ce qui doit être convertit 
     //Ce qui vient de la route est au format string, on veut un number 
     const budget_id_for_db = Number(budget_id);
-
-    //Création d'un schéma pour le montant (on veut un nombre positif à maximum deux chiffres après la virgule)
-    //En principe, la conversion du montant avec Number() a déjà réduit le nombre de chiffre après la virgule à 2
-    //Le reste des champs (description, payment_method, date) n'est pas required et la date est séléctionnée via un calendrier
-    const amountSchema = Joi.number()
-    .positive()
-    .precision(2)  // maximum 2 chiffres après la virgule
-    .custom((value, helpers) => {
-      // Vérifie qu'il n'y a pas plus de deux décimales
-      if (!Number.isInteger(value * 100)) {
-        return helpers.error('number.decimalPlaces');
-      }
-      return value;
-    }, 'Decimal places validation')
-    .messages({
-      'number.base': 'Le champ doit être un nombre.',
-      'number.positive': 'Le nombre doit être positif.',
-      'number.decimalPlaces': 'Le nombre ne peut avoir que deux chiffres après la virgule au maximum.'
-    });
     
     console.log("amount_for_db: ", amount_for_db)
     //Vérification de la validité du montant, réponse 400 avec un message personnalisé en cas d'échec
@@ -104,7 +86,6 @@ export async function createExpenditure(req: AuthenticatedRequest, res: Response
         return;
     }
       
-
     const expenditureData: ExpenditureObject = {
         description: description? description: null,
         payment_method: payment_method? payment_method:null ,
@@ -113,7 +94,6 @@ export async function createExpenditure(req: AuthenticatedRequest, res: Response
         budget_id: budget_id_for_db,
         user_id: user_id_for_db
     }   
-
 
     const newExpenditure = await ExpenditureDatamapper.create(expenditureData);
 
@@ -160,6 +140,16 @@ export async function updateExpenditure(req: AuthenticatedRequest, res: Response
 
     const { description, payment_method, amount, date} = req.body;
     const amount_for_db = Number(amount)
+
+    //Vérification de la validité du montant, réponse 400 avec un message personnalisé en cas d'échec
+    const {error} = amountSchema.validate(amount_for_db);
+    if (error) {
+        res.status(400).json({
+            message: "Validation échouée !",
+            details: error.details.map((detail)=>detail.message)
+        });
+        return;
+    }
 
     let date_for_db: Date | null;
     if(date){
