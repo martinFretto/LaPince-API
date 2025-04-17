@@ -51,6 +51,7 @@ export async function createBudget(req: AuthenticatedRequest, res: Response): Pr
     }
 
     const { name, warning_amount, spent_amount, allocated_amount, color, icon } = req.body;
+    
 
     const budgetData: BudgetObject = {
         name,
