@@ -73,7 +73,7 @@ class ExpenditureDatamapper {
         }
 
         const expenditure = new Expenditure(result.rows[0]);
-        await this.updateBudgetAndUserAfterExpenditure(expenditure.budget_id);
+        await this.updateBudgetAndUserAfterExpenditure(expenditure.user_id, expenditure.budget_id);
 
         return expenditure;
     }
@@ -98,7 +98,7 @@ class ExpenditureDatamapper {
         };
 
         const result = await db.query(query);
-        await this.updateBudgetAndUserAfterExpenditure(dataObj.budget_id);
+        await this.updateBudgetAndUserAfterExpenditure(dataObj.user_id, dataObj.budget_id);
 
         if (!result.rowCount) {
             return null;
@@ -118,7 +118,7 @@ class ExpenditureDatamapper {
     
             await db.query(query);
 
-            await this.updateBudgetAndUserAfterExpenditure(expenditure.budget_id);
+            await this.updateBudgetAndUserAfterExpenditure(expenditure.user_id, expenditure.budget_id);
     
             return true;
         } catch(error){
@@ -126,7 +126,7 @@ class ExpenditureDatamapper {
         }      
     }
 
-    static async updateBudgetAndUserAfterExpenditure(budget_id:number){
+    static async updateBudgetAndUserAfterExpenditure(user_id: number, budget_id:number){
         const budgetQuery = {
             text: ` UPDATE "budget" 
                     SET spent_amount = 
@@ -146,7 +146,7 @@ class ExpenditureDatamapper {
                     FROM expenditure
                     WHERE user_id = $1)
                     WHERE id = $1;`,
-            values: [budget_id],
+            values: [user_id],
         };
 
         await db.query(userQuery);
