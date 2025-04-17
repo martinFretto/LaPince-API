@@ -8,5 +8,4 @@ const router = Router();
 router.use("/auth", authRouter);
 router.use("/", expenditureRouter)
 router.use("/budgets", budgetRouter)
-
 export { router };
