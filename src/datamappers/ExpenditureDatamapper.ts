@@ -27,8 +27,35 @@ class ExpenditureDatamapper {
         //Le Budget_ID est suffisant pour la requête
         //Mais on vérifie que le budget appartient bien à l'utilisateur authentifié
         const query = {
-            text: `SELECT * FROM "expenditure" WHERE budget_id= $1 and user_id= $2;`,
+            text: `SELECT * FROM "expenditure" WHERE budget_id= $1 and user_id= $2 ORDER BY date DESC;`,
             values: [budget_id, user_id],
+        };
+
+        const results = await db.query(query);
+
+        if (!results.rowCount) {
+            return null;
+        }
+
+        // On va construire un tableau de dépenses
+        const expenditures= [];
+
+        for (let i = 0; i < results.rows.length; i++) {
+            // on instancie un level à chaque tour de boucle
+            const expenditure = new Expenditure(results.rows[i]);
+
+            expenditures.push(expenditure);
+        }
+
+        return expenditures;
+    }
+
+    static async findAll(user_id: number): Promise<Expenditure[]|null> {
+        //Le Budget_ID est suffisant pour la requête
+        //Mais on vérifie que le budget appartient bien à l'utilisateur authentifié
+        const query = {
+            text: `SELECT * FROM "expenditure" WHERE user_id= $1 ORDER BY date DESC;`,
+            values: [user_id],
         };
 
         const results = await db.query(query);
@@ -110,20 +137,16 @@ class ExpenditureDatamapper {
     }
 
     static async destroy(expenditure: Expenditure): Promise<boolean> {
-        try{
-            const query = {
-                text: `DELETE FROM "expenditure" WHERE id = $1;`,
-                values: [expenditure.id],
-            };
+        const query = {
+            text: `DELETE FROM "expenditure" WHERE id = $1;`,
+            values: [expenditure.id],
+        };
     
-            await db.query(query);
+        await db.query(query);
 
-            await this.updateBudgetAndUserAfterExpenditure(expenditure.user_id, expenditure.budget_id);
+        await this.updateBudgetAndUserAfterExpenditure(expenditure.user_id, expenditure.budget_id);
     
-            return true;
-        } catch(error){
-            return false;
-        }      
+        return true;    
     }
 
     static async updateBudgetAndUserAfterExpenditure(user_id: number, budget_id:number){
