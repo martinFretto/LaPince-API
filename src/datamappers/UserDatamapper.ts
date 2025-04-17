@@ -33,7 +33,7 @@ class UserDatamapper {
             return new User(results.rows[0]);
         }
     
-        return null; // Retourne explicitement null si aucun résultat n'est trouvé
+        return null; 
     }
 
     static async create(dataObj: UserObject){

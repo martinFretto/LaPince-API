@@ -3,12 +3,11 @@ import argon2 from "argon2";
 import { UserDatamapper } from "../datamappers/UserDatamapper";
 import { getUserIdInToken } from "../libs/jwtToken";
 
-interface AuthenticatedRequest extends Request {
-    token?: string;
-}
+    interface AuthenticatedRequest extends Request {
+        token?: string;
+    }
 
-export async function getUserInfo(req: AuthenticatedRequest, res: Response): Promise<void> {
-    try {
+    export async function getUserInfo(req: AuthenticatedRequest, res: Response): Promise<void> {
         const user_id = getUserIdInToken(req);
         const user = await UserDatamapper.findById(user_id);
 
@@ -27,16 +26,10 @@ export async function getUserInfo(req: AuthenticatedRequest, res: Response): Pro
             created_at: user.created_at,
             updated_at: user.updated_at,
         });
-    } catch (error) {
-        console.error("Erreur dans getUserInfo :", error);
-        res.status(500).json({ status: 500, message: "Erreur serveur." });
     }
-}
 
-export async function updateUserProfile(req: AuthenticatedRequest, res: Response): Promise<void> {
-    try {
+    export async function updateUserProfile(req: AuthenticatedRequest, res: Response): Promise<void> {
         const user_id = getUserIdInToken(req);
-
         const { email, first_name, last_name } = req.body;
 
         const updatedUser = await UserDatamapper.update({
@@ -60,14 +53,9 @@ export async function updateUserProfile(req: AuthenticatedRequest, res: Response
             total_expenses: updatedUser.total_expenses,
             updated_at: updatedUser.updated_at,
         });
-    } catch (error) {
-        console.error("Erreur dans updateUserProfile :", error);
-        res.status(500).json({ status: 500, message: "Erreur serveur." });
     }
-}
 
-export async function updatePassword(req: AuthenticatedRequest, res: Response): Promise<void> {
-    try {
+    export async function updatePassword(req: AuthenticatedRequest, res: Response): Promise<void> {
         const user_id = getUserIdInToken(req);
         const { current_password, new_password } = req.body;
 
@@ -95,14 +83,9 @@ export async function updatePassword(req: AuthenticatedRequest, res: Response): 
         }
 
         res.status(200).json({ success: true });
-    } catch (error) {
-        console.error("Erreur dans updatePassword :", error);
-        res.status(500).json({ status: 500, message: "Erreur serveur." });
     }
-}
 
-export async function deleteUser(req: AuthenticatedRequest, res: Response): Promise<void> {
-    try {
+    export async function deleteUser(req: AuthenticatedRequest, res: Response): Promise<void> {
         const user_id = getUserIdInToken(req);
         const user = await UserDatamapper.findById(user_id);
 
@@ -119,8 +102,4 @@ export async function deleteUser(req: AuthenticatedRequest, res: Response): Prom
         }
 
         res.status(200).json({ success: true });
-    } catch (error) {
-        console.error("Erreur dans deleteUser :", error);
-        res.status(500).json({ status: 500, message: "Erreur serveur." });
     }
-}
