@@ -51,13 +51,9 @@ export async function getOneExpenditure(req: AuthenticatedRequest, res: Response
 }
 
 export async function getAllExpenditures(req: AuthenticatedRequest, res: Response): Promise<void> {
-    //le budget_id se trouve dans le endpoint (route paramétrée) "/budgets/:budget_id/expenses"
-   const { expenditure_id } = req.params;
-
    //On récupère l'id de l'utilisateur dans le token
    const user_id_for_db = getUserIdInToken(req);
-
-   const expenditures = await ExpenditureDatamapper.findAll(user_id_for_db);
+   const expenditures = await ExpenditureDatamapper.findAllWithIconAndColor(user_id_for_db);
 
    if(expenditures?.length){
         res.status(200).json({ status: 200, data: expenditures});

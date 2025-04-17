@@ -1,5 +1,5 @@
 import { db } from "../database/db";
-import { Expenditure } from "../models/Expenditure";
+import { Expenditure, ExpenditureWithDetails } from "../models/Expenditure";
 import { ExpenditureObject } from "../types/ModelTypes";
 
 class ExpenditureDatamapper {
@@ -50,31 +50,41 @@ class ExpenditureDatamapper {
         return expenditures;
     }
 
-    static async findAll(user_id: number): Promise<Expenditure[]|null> {
+    static async findAllWithIconAndColor(user_id: number): Promise<ExpenditureWithDetails[]|null> {
         //Le Budget_ID est suffisant pour la requête
         //Mais on vérifie que le budget appartient bien à l'utilisateur authentifié
+        console.log("requête préparée")
         const query = {
-            text: `SELECT * FROM "expenditure" WHERE user_id= $1 ORDER BY date DESC;`,
+            text: 
+            `SELECT expenditure.id, expenditure.budget_id, date, description, amount, budget.color, budget.icon FROM expenditure
+            JOIN BUDGET on budget.id = expenditure.budget_id
+            WHERE expenditure.user_id= $1 ORDER BY date DESC;`,
             values: [user_id],
         };
+        console.log("requête préparée: ")
 
         const results = await db.query(query);
+        console.log("results: ", results)
 
         if (!results.rowCount) {
             return null;
         }
 
-        // On va construire un tableau de dépenses
-        const expenditures= [];
+        // On va construire un tableau de dépenses avec icon et color
+        const expendituresWithDetails= [];
 
         for (let i = 0; i < results.rows.length; i++) {
             // on instancie un level à chaque tour de boucle
-            const expenditure = new Expenditure(results.rows[i]);
-
-            expenditures.push(expenditure);
+            const expenditureWithDetails:ExpenditureWithDetails = {
+                expenditure: new Expenditure(results.rows[i]),
+                budgetColor: results.rows[i].color,
+                budgetIcon: results.rows[i].icon
+            }               
+            
+            expendituresWithDetails.push(expenditureWithDetails);
         }
 
-        return expenditures;
+        return expendituresWithDetails;
     }
 
     static async create(dataObj: ExpenditureObject): Promise <Expenditure|null>{
