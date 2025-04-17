@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { ExpenditureObject } from "../types/ModelTypes";
 import { ExpenditureDatamapper } from "../datamappers/ExpenditureDatamapper";
-import Joi from 'joi';
 import { getUserIdInToken } from "../libs/jwtToken";
 import { amountSchema } from "../libs/validationSchemas";
 

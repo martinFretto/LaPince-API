@@ -15,8 +15,10 @@ export async function getAllBudgets(req: AuthenticatedRequest, res: Response): P
 
     if (budgets?.length) {
         res.status(200).json({ status: 200, data: budgets });
+        return;
     } else {
         res.status(404).json({ status: 404, message: "Aucun budget trouvé pour cet utilisateur." });
+        return;
     }
 }
 
@@ -29,8 +31,10 @@ export async function getBudgetById(req: AuthenticatedRequest, res: Response): P
 
     if (budget) {
         res.status(200).json({ status: 200, data: budget });
+        return;
     } else {
         res.status(404).json({ status: 404, message: "Ce budget est introuvable." });
+        return;
     }
 }
 
@@ -62,8 +66,10 @@ export async function createBudget(req: AuthenticatedRequest, res: Response): Pr
 
     if (newBudget) {
         res.status(201).json({ status: 201, message: "Budget créé avec succès.", data: newBudget });
+        return;
     } else {
         res.status(500).json({ status: 500, message: "Une erreur est survenue lors de la création du budget." });
+        return;
     }
 }
 
@@ -104,8 +110,10 @@ export async function updateBudget(req: AuthenticatedRequest, res: Response): Pr
 
     if (updatedBudget) {
         res.status(200).json({ status: 200, message: "Budget modifié avec succès.", data: updatedBudget });
+        return;
     } else {
         res.status(500).json({ status: 500, message: "Une erreur est survenue lors de la modification du budget." });
+        return;
     }
 }
 
@@ -125,7 +133,9 @@ export async function deleteBudget(req: AuthenticatedRequest, res: Response): Pr
 
     if (deleted) {
         res.status(204).send();
+        return;
     } else {
         res.status(500).json({ status: 500, message: "Une erreur est survenue lors de la suppression du budget." });
+        return;
     }
 }

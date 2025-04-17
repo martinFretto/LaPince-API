@@ -3,8 +3,8 @@ import { UserDatamapper } from "../datamappers/UserDatamapper";
 import { UserObject } from "../types/ModelTypes";
 import { TokenPayloadType } from "../types/TokenPayloadType";
 import { generateToken } from "../libs/jwtToken";
-import argon2 from "argon2"
 import { loginSchema, registerSchema } from "../libs/validationSchemas";
+import argon2 from "argon2"
 
 
 export async function registerUser(req: Request, res: Response) {
