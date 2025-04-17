@@ -4,13 +4,15 @@ import { ExpenditureObject } from "../types/ModelTypes";
 
 class ExpenditureDatamapper {
 
-    static async findById(id: number, user_id: number): Promise<Expenditure| null> {
-            //L'id est suffisant pour la requête
-            //Mais on vérifie que la dépense demandée  appartient bien à l'utilisateur authentifié
-            const query = {
-                text: `SELECT * FROM "expenditure" WHERE id = $1 and user_id= $2;`,
-                values: [id, user_id],
-            };
+    static async findById(id: number, budget_id: number, user_id: number): Promise<Expenditure| null> {
+        //L'id est suffisant pour la requête
+        //Mais on vérifie que la dépense demandée  appartient bien à l'utilisateur authentifié
+        //On vérifie également que la dépense appartient budget (présent dans l'URL) 
+        //Car on va potentiellement se servir de l'entité retournée pour la destroy
+        const query = {
+            text: `SELECT * FROM "expenditure" WHERE id = $1 AND budget_id= $2 AND user_id= $3;`,
+            values: [id, budget_id, user_id],
+        };
     
             const results = await db.query(query);
     
@@ -146,7 +148,7 @@ class ExpenditureDatamapper {
         return expenditure;
     }
 
-    static async destroy(expenditure: Expenditure): Promise<boolean> {
+    static async destroy(expenditure: Expenditure){
         //On précise dans la requête l'user id(pour ne pas qu'un utilisateur puisse supprimer la dépense d'un autre via une requête dans l'url)
         //On précise également le budget
         const query = {
@@ -157,8 +159,7 @@ class ExpenditureDatamapper {
         await db.query(query);
 
         await this.updateBudgetAndUserAfterExpenditure(expenditure.user_id, expenditure.budget_id);
-    
-        return true;    
+      
     }
 
     static async updateBudgetAndUserAfterExpenditure(user_id: number, budget_id:number){
@@ -185,8 +186,6 @@ class ExpenditureDatamapper {
         };
 
         await db.query(userQuery);
-
-        return;
     }
 }
 
