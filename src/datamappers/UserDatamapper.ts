@@ -20,6 +20,22 @@ class UserDatamapper {
         return user;
     }
 
+    static async findById(id: number): Promise<User | null> {
+        const query = {
+            text: 'SELECT * FROM "user" WHERE id = $1;',
+            values: [id],
+        };
+    
+        const results = await db.query(query);
+    
+        
+        if (results && results.rowCount && results.rowCount > 0) {
+            return new User(results.rows[0]);
+        }
+    
+        return null; // Retourne explicitement null si aucun résultat n'est trouvé
+    }
+
     static async create(dataObj: UserObject){
         const query = {
             text: `
@@ -46,7 +62,49 @@ class UserDatamapper {
 
         return user;
     }
-
+    static async update(dataObj: Partial<UserObject>): Promise<User | null> {
+        const query = {
+            text: `
+                UPDATE "user"
+                SET
+                    first_name = COALESCE($1, first_name),
+                    last_name = COALESCE($2, last_name),
+                    email = COALESCE($3, email),
+                    password = COALESCE($4, password)
+                WHERE id = $5
+                RETURNING *;`,
+            values: [
+                dataObj.first_name || null,
+                dataObj.last_name || null,
+                dataObj.email || null,
+                dataObj.password || null,
+                dataObj.id,
+            ],
+        };
+    
+        const result = await db.query(query);
+    
+        if (!result.rowCount) {
+            return null;
+        }
+    
+        return new User(result.rows[0]);
+    }
+    
+    static async delete(user: User): Promise<boolean> {
+        try {
+            const query = {
+                text: `DELETE FROM "user" WHERE id = $1;`,
+                values: [user.id],
+            };
+    
+            await db.query(query);
+            return true;
+        } catch (error) {
+            console.error("Erreur dans delete :", error);
+            return false;
+        }
+    }
 }
 
 export {UserDatamapper}
