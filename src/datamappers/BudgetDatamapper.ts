@@ -98,18 +98,14 @@ class BudgetDatamapper {
 
     // Supprime un budget de la base de données.
     static async destroy(budget: Budget): Promise<boolean> {
-        try {
-            const query = {
-                text: `DELETE FROM "budget" WHERE id = $1;`,
-                values: [budget.id],
-            };
 
-            await db.query(query);
-            return true;
-        } catch (error) {
-            console.error("Erreur dans destroy :", error);
-            return false;
-        }
+        const query = {
+            text: `DELETE FROM "budget" WHERE id = $1;`,
+            values: [budget.id],
+        };
+
+        await db.query(query);
+        return true;
     }
 }
 

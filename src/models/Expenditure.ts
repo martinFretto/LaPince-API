@@ -20,4 +20,10 @@ class Expenditure extends CoreModel {
     }
 }
 
-export { Expenditure };
+interface ExpenditureWithDetails {
+    expenditure: Expenditure;
+    budgetColor: string;
+    budgetIcon: string;
+}
+
+export { Expenditure, ExpenditureWithDetails };

@@ -1,5 +1,5 @@
 import { db } from "../database/db";
-import { Expenditure } from "../models/Expenditure";
+import { Expenditure, ExpenditureWithDetails } from "../models/Expenditure";
 import { ExpenditureObject } from "../types/ModelTypes";
 
 class ExpenditureDatamapper {
@@ -27,7 +27,7 @@ class ExpenditureDatamapper {
         //Le Budget_ID est suffisant pour la requête
         //Mais on vérifie que le budget appartient bien à l'utilisateur authentifié
         const query = {
-            text: `SELECT * FROM "expenditure" WHERE budget_id= $1 and user_id= $2;`,
+            text: `SELECT * FROM "expenditure" WHERE budget_id= $1 and user_id= $2 ORDER BY date DESC;`,
             values: [budget_id, user_id],
         };
 
@@ -48,6 +48,43 @@ class ExpenditureDatamapper {
         }
 
         return expenditures;
+    }
+
+    static async findAllWithIconAndColor(user_id: number): Promise<ExpenditureWithDetails[]|null> {
+        //Le Budget_ID est suffisant pour la requête
+        //Mais on vérifie que le budget appartient bien à l'utilisateur authentifié
+        console.log("requête préparée")
+        const query = {
+            text: 
+            `SELECT expenditure.id, expenditure.budget_id, date, description, amount, budget.color, budget.icon FROM expenditure
+            JOIN BUDGET on budget.id = expenditure.budget_id
+            WHERE expenditure.user_id= $1 ORDER BY date DESC;`,
+            values: [user_id],
+        };
+        console.log("requête préparée: ")
+
+        const results = await db.query(query);
+        console.log("results: ", results)
+
+        if (!results.rowCount) {
+            return null;
+        }
+
+        // On va construire un tableau de dépenses avec icon et color
+        const expendituresWithDetails= [];
+
+        for (let i = 0; i < results.rows.length; i++) {
+            // on instancie un level à chaque tour de boucle
+            const expenditureWithDetails:ExpenditureWithDetails = {
+                expenditure: new Expenditure(results.rows[i]),
+                budgetColor: results.rows[i].color,
+                budgetIcon: results.rows[i].icon
+            }               
+            
+            expendituresWithDetails.push(expenditureWithDetails);
+        }
+
+        return expendituresWithDetails;
     }
 
     static async create(dataObj: ExpenditureObject): Promise <Expenditure|null>{
@@ -110,20 +147,16 @@ class ExpenditureDatamapper {
     }
 
     static async destroy(expenditure: Expenditure): Promise<boolean> {
-        try{
-            const query = {
-                text: `DELETE FROM "expenditure" WHERE id = $1;`,
-                values: [expenditure.id],
-            };
+        const query = {
+            text: `DELETE FROM "expenditure" WHERE id = $1;`,
+            values: [expenditure.id],
+        };
     
-            await db.query(query);
+        await db.query(query);
 
-            await this.updateBudgetAndUserAfterExpenditure(expenditure.user_id, expenditure.budget_id);
+        await this.updateBudgetAndUserAfterExpenditure(expenditure.user_id, expenditure.budget_id);
     
-            return true;
-        } catch(error){
-            return false;
-        }      
+        return true;    
     }
 
     static async updateBudgetAndUserAfterExpenditure(user_id: number, budget_id:number){

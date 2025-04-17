@@ -1,17 +1,20 @@
 import { Router } from "express";
 import * as expenditureController from '../controllers/expenditureController';
 import { authMiddleware } from "../middlewares/authMiddleware";
+import { catchErrors } from "../middlewares/catchErrors";
 
 const expenditureRouter = Router();
 
-expenditureRouter.get("/budgets/:budget_id/expenses/", authMiddleware, expenditureController.getExpendituresByBudget);
+expenditureRouter.get("/expenses/", authMiddleware, catchErrors(expenditureController.getAllExpenditures));
 
-expenditureRouter.get("/budgets/:budget_id/expenses/:expenditure_id", authMiddleware, expenditureController.getOneExpenditure);
+expenditureRouter.get("/budgets/:budget_id/expenses/", authMiddleware, catchErrors(expenditureController.getExpendituresByBudget));
 
-expenditureRouter.post("/budgets/:budget_id/expenses/", authMiddleware, expenditureController.createExpenditure);
+expenditureRouter.get("/budgets/:budget_id/expenses/:expenditure_id", authMiddleware, catchErrors(expenditureController.getOneExpenditure));
 
-expenditureRouter.patch("/budgets/:budget_id/expenses/:expenditure_id", authMiddleware, expenditureController.updateExpenditure);
+expenditureRouter.post("/budgets/:budget_id/expenses/", authMiddleware, catchErrors(expenditureController.createExpenditure));
 
-expenditureRouter.delete("/budgets/:budget_id/expenses/:expenditure_id", authMiddleware, expenditureController.deleteExpenditure);
+expenditureRouter.patch("/budgets/:budget_id/expenses/:expenditure_id", authMiddleware, catchErrors(expenditureController.updateExpenditure));
+
+expenditureRouter.delete("/budgets/:budget_id/expenses/:expenditure_id", authMiddleware, catchErrors(expenditureController.deleteExpenditure));
 
 export {expenditureRouter}

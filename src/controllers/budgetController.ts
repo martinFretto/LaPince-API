@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import Joi from "joi";
 import { getUserIdInToken } from "../libs/jwtToken";
 import { BudgetDatamapper } from "../datamappers/BudgetDatamapper";
 import { BudgetObject } from "../types/ModelTypes";
+import { budgetSchema } from "../libs/validationSchemas";
 
 interface AuthenticatedRequest extends Request {
     token?: string;
@@ -15,8 +15,10 @@ export async function getAllBudgets(req: AuthenticatedRequest, res: Response): P
 
     if (budgets?.length) {
         res.status(200).json({ status: 200, data: budgets });
+        return;
     } else {
         res.status(404).json({ status: 404, message: "Aucun budget trouvé pour cet utilisateur." });
+        return;
     }
 }
 
@@ -29,24 +31,17 @@ export async function getBudgetById(req: AuthenticatedRequest, res: Response): P
 
     if (budget) {
         res.status(200).json({ status: 200, data: budget });
+        return;
     } else {
         res.status(404).json({ status: 404, message: "Ce budget est introuvable." });
+        return;
     }
 }
 
 export async function createBudget(req: AuthenticatedRequest, res: Response): Promise<void> {
     const user_id_for_db = getUserIdInToken(req);
 
-    const schema = Joi.object({
-        name: Joi.string().max(255).required(),
-        warning_amount: Joi.number().min(0).required(),
-        spent_amount: Joi.number().min(0).optional(),
-        allocated_amount: Joi.number().min(0).required(),
-        color: Joi.string().max(255).optional(),
-        icon: Joi.string().max(255).optional(),
-    });
-
-    const { error } = schema.validate(req.body);
+    const { error } = budgetSchema.validate(req.body);
     if (error) {
         res.status(400).json({
             message: "Validation échouée.",
@@ -71,8 +66,10 @@ export async function createBudget(req: AuthenticatedRequest, res: Response): Pr
 
     if (newBudget) {
         res.status(201).json({ status: 201, message: "Budget créé avec succès.", data: newBudget });
+        return;
     } else {
         res.status(500).json({ status: 500, message: "Une erreur est survenue lors de la création du budget." });
+        return;
     }
 }
 
@@ -88,16 +85,7 @@ export async function updateBudget(req: AuthenticatedRequest, res: Response): Pr
         return;
     }
 
-    const schema = Joi.object({
-        name: Joi.string().max(255).optional(),
-        warning_amount: Joi.number().min(0).optional(),
-        spent_amount: Joi.number().min(0).optional(),
-        allocated_amount: Joi.number().min(0).optional(),
-        color: Joi.string().max(255).optional(),
-        icon: Joi.string().max(255).optional(),
-    }).options({ allowUnknown: true });
-
-    const { error } = schema.validate(req.body);
+    const { error } = budgetSchema.validate(req.body);
     if (error) {
         res.status(400).json({
             message: "Validation échouée.",
@@ -122,8 +110,10 @@ export async function updateBudget(req: AuthenticatedRequest, res: Response): Pr
 
     if (updatedBudget) {
         res.status(200).json({ status: 200, message: "Budget modifié avec succès.", data: updatedBudget });
+        return;
     } else {
         res.status(500).json({ status: 500, message: "Une erreur est survenue lors de la modification du budget." });
+        return;
     }
 }
 
@@ -143,7 +133,9 @@ export async function deleteBudget(req: AuthenticatedRequest, res: Response): Pr
 
     if (deleted) {
         res.status(204).send();
+        return;
     } else {
         res.status(500).json({ status: 500, message: "Une erreur est survenue lors de la suppression du budget." });
+        return;
     }
 }
