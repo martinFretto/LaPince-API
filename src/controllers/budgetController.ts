@@ -95,13 +95,12 @@ export async function updateBudget(req: AuthenticatedRequest, res: Response): Pr
         return;
     }
 
-    const { name, warning_amount, spent_amount, allocated_amount, color, icon } = req.body;
+    const { name, warning_amount, allocated_amount, color, icon } = req.body;
 
     const updateData: Partial<BudgetObject> = {
         id: budget.id,
         name: name || budget.name,
-        warning_amount: warning_amount ?? budget.warning_amount,
-        spent_amount: spent_amount ?? budget.spent_amount,
+        warning_amount: warning_amount ?? budget.warning_amount,        
         allocated_amount: allocated_amount ?? budget.allocated_amount,
         color: color || budget.color,
         icon: icon || budget.icon,

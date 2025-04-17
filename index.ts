@@ -1,8 +1,8 @@
 import express from 'express';
 import 'dotenv/config';
-import { router } from './router';
+import { router } from './src/router';
 import helmet from 'helmet';
-import { notFound } from './middlewares/notFound';
+import { notFound } from './src/middlewares/notFound';
 
 const PORT = process.env.PORT || 3000;
 const app = express();

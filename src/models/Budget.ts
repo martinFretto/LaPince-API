@@ -2,8 +2,7 @@ import { BudgetObject } from "../types/ModelTypes";
 import { CoreModel } from "./CoreModel";
 
 class Budget extends CoreModel {
-    static table = "budget";
-
+    
     name: string;
     warning_amount: number;
     spent_amount: number;
