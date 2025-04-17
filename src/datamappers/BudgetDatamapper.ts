@@ -3,7 +3,7 @@ import { Budget } from "../models/Budget";
 import { BudgetObject } from "../types/ModelTypes";
 
 class BudgetDatamapper {
-    // Trouve un budget spécifique par son ID et vérifie qu'il appartient bien à l'utilisateur.
+        // Trouve un budget spécifique par son ID et vérifie qu'il appartient bien à l'utilisateur.
     static async findById(id: number, user_id: number): Promise<Budget | null> {
         const query = {
             text: `SELECT * FROM "budget" WHERE id = $1 AND user_id = $2;`,
@@ -19,7 +19,7 @@ class BudgetDatamapper {
         return new Budget(result.rows[0]);
     }
 
-    // Trouve tous les budgets associés à un utilisateur.
+        // Trouve tous les budgets associés à un utilisateur.
     static async findByUser(user_id: number): Promise<Budget[] | null> {
         const query = {
             text: `SELECT * FROM "budget" WHERE user_id = $1;`,
