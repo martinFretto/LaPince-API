@@ -31,15 +31,17 @@ export async function getExpendituresByBudget(req: AuthenticatedRequest, res: Re
 
 export async function getOneExpenditure(req: AuthenticatedRequest, res: Response): Promise<void> {
      //le budget_id se trouve dans le endpoint (route paramétrée) "/budgets/:budget_id/expenses"
-    const { expenditure_id } = req.params;
+     const { expenditure_id, budget_id } = req.params;
+     //on convertit ce qui doit être convertit 
+    //Ce qui vient du token est de la route est au format string, on veut des number 
+     const expenditure_id_for_db = Number(expenditure_id)
+     const budget_id_for_db = Number(budget_id)
 
     //On récupère l'id de l'utilisateur dans le token
     const user_id_for_db = getUserIdInToken(req);
 
-    //on convertit ce qui doit être convertit 
-    //Ce qui vient du token est de la route est au format string, on veut des number 
-    const expenditure_id_for_db = Number(expenditure_id)
-    const expenditure = await ExpenditureDatamapper.findById(expenditure_id_for_db, user_id_for_db);
+    
+    const expenditure = await ExpenditureDatamapper.findById(expenditure_id_for_db, budget_id_for_db, user_id_for_db);
 
     if(expenditure){
         res.status(200).json({ status: 200, data: expenditure});
@@ -121,17 +123,18 @@ export async function createExpenditure(req: AuthenticatedRequest, res: Response
 
 export async function deleteExpenditure(req: AuthenticatedRequest, res: Response): Promise<void> {
      
-    const { expenditure_id } = req.params;
-    const expenditure_id_for_db = Number(expenditure_id)
+    const { expenditure_id, budget_id } = req.params;
+     const expenditure_id_for_db = Number(expenditure_id)
+     const budget_id_for_db = Number(budget_id)
 
     //On récupère l'id de l'utilisateur dans le token
     const user_id_for_db = getUserIdInToken(req);
 
-    const expenditure = await ExpenditureDatamapper.findById(expenditure_id_for_db, user_id_for_db);
+    const expenditure = await ExpenditureDatamapper.findById(expenditure_id_for_db, budget_id_for_db, user_id_for_db);
 
     if(expenditure){
         await ExpenditureDatamapper.destroy(expenditure);
-        res.status(204).json({ status: 204, message: "Dépense supprimée"});
+        res.status(200).json({ status: 200, message: "Dépense supprimée"});
         return;
     } else{
         res.status(404).json({ status: 404, message: "Le dépense que vous voulez supprimer n'existe pas!"});
@@ -142,13 +145,14 @@ export async function deleteExpenditure(req: AuthenticatedRequest, res: Response
 export async function updateExpenditure(req: AuthenticatedRequest, res: Response): Promise<void> {
 
 
-    const { expenditure_id } = req.params;  
-    const expenditure_id_for_db = Number(expenditure_id)
+    const { expenditure_id, budget_id } = req.params;
+     const expenditure_id_for_db = Number(expenditure_id)
+     const budget_id_for_db = Number(budget_id)
 
     //On récupère l'id de l'utilisateur dans le token
     const user_id_for_db = getUserIdInToken(req);
 
-    const expenditure = await ExpenditureDatamapper.findById(expenditure_id_for_db, user_id_for_db);
+    const expenditure = await ExpenditureDatamapper.findById(expenditure_id_for_db, budget_id_for_db, user_id_for_db);
 
 
     const { description, payment_method, amount, date} = req.body;
