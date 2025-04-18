@@ -39,13 +39,12 @@ class BudgetDatamapper {
     static async create(dataObj: BudgetObject): Promise<Budget | null> {
         const query = {
             text: `
-                INSERT INTO "budget" (name, warning_amount, spent_amount, allocated_amount, color, icon, user_id)
-                VALUES ($1, $2, $3, $4, $5, $6, $7)
+                INSERT INTO "budget" (name, warning_amount, allocated_amount, color, icon, user_id)
+                VALUES ($1, $2, $3, $4, $5, $6)
                 RETURNING *;`,
             values: [
                 dataObj.name,
-                dataObj.warning_amount,
-                dataObj.spent_amount,
+                dataObj.warning_amount,                
                 dataObj.allocated_amount,
                 dataObj.color || null,
                 dataObj.icon || null,
@@ -69,17 +68,15 @@ class BudgetDatamapper {
                 UPDATE "budget"
                 SET
                     name = COALESCE($1, name),
-                    warning_amount = COALESCE($2, warning_amount),
-                    spent_amount = COALESCE($3, spent_amount),
-                    allocated_amount = COALESCE($4, allocated_amount),
-                    color = COALESCE($5, color),
-                    icon = COALESCE($6, icon)
-                WHERE id = $7
+                    warning_amount = COALESCE($2, warning_amount),                    
+                    allocated_amount = COALESCE($3, allocated_amount),
+                    color = COALESCE($4, color),
+                    icon = COALESCE($5, icon)
+                WHERE id = $6
                 RETURNING *;`,
             values: [
                 dataObj.name || null,
-                dataObj.warning_amount || null,
-                dataObj.spent_amount || null,
+                dataObj.warning_amount || null,                
                 dataObj.allocated_amount || null,
                 dataObj.color || null,
                 dataObj.icon || null,
