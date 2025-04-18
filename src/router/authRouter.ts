@@ -4,7 +4,7 @@ import { catchErrors } from '../middlewares/catchErrors';
 
 const authRouter = Router();
 
-authRouter.post('/login', catchErrors(authController.loginUser));
-authRouter.post('/register', catchErrors(authController.registerUser));
+authRouter.post('/login', authController.loginUser);
+authRouter.post('/register', authController.registerUser);
 
 export { authRouter };

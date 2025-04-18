@@ -8,26 +8,35 @@ interface AuthenticatedRequest extends Request {
     token?: string;
 }
 
-export async function getExpendituresByBudget(req: AuthenticatedRequest, res: Response): Promise<void> {
-    //le budget_id se trouve dans le endpoint (route paramétrée) "/budgets/:budget_id/expenses"
-    const { budget_id } = req.params;
+export async function getAllExpenditures(req: AuthenticatedRequest, res: Response): Promise<void> {
+    
+    //budget_id sera undefined (ou null) dans la requête pour le dashboard"
+    //budget_id aura une valeur dans la requête pour les dépenses"
+    const { budgetId } = req.query;
 
     //On récupère l'id de l'utilisateur dans le token
     const user_id_for_db = getUserIdInToken(req);
+    
+    
+    let expenditures; 
 
-    //on convertit ce qui doit être convertit 
-    //Ce qui vient du token est de la route est au format string, on veut des number 
-    const budget_id_for_db = Number(budget_id)
-    const expenditures = await ExpenditureDatamapper.findByBudget(budget_id_for_db, user_id_for_db);
+    console.log("budgetId??: ", budgetId)
 
-    if(expenditures?.length){
-        res.status(200).json({ status: 200, data: expenditures});
-        return;
-    } else {
-        res.status(404).json({status: 404, message: "Aucune dépense pour ce budget" });
-        return;
+    if(budgetId){
+        const budget_id_for_db = Number(budgetId)
+        expenditures = await ExpenditureDatamapper.findByBudget(budget_id_for_db, user_id_for_db);
+    } else{
+        expenditures = await ExpenditureDatamapper.findAllWithIconAndColor(user_id_for_db);
     }
-}
+ 
+    if(expenditures?.length){
+         res.status(200).json({ status: 200, data: expenditures});
+         return;
+     } else {
+         res.status(404).json({status: 404, message: "Aucune dépense" });
+         return;
+     }
+ }
 
 export async function getOneExpenditure(req: AuthenticatedRequest, res: Response): Promise<void> {
      //le budget_id se trouve dans le endpoint (route paramétrée) "/budgets/:budget_id/expenses"
@@ -41,7 +50,7 @@ export async function getOneExpenditure(req: AuthenticatedRequest, res: Response
     const user_id_for_db = getUserIdInToken(req);
 
     
-    const expenditure = await ExpenditureDatamapper.findById(expenditure_id_for_db, budget_id_for_db, user_id_for_db);
+    const expenditure = await ExpenditureDatamapper.findById(expenditure_id_for_db, user_id_for_db);
 
     if(expenditure){
         res.status(200).json({ status: 200, data: expenditure});
@@ -52,32 +61,17 @@ export async function getOneExpenditure(req: AuthenticatedRequest, res: Response
     }
 }
 
-export async function getAllExpenditures(req: AuthenticatedRequest, res: Response): Promise<void> {
-   //On récupère l'id de l'utilisateur dans le token
-   const user_id_for_db = getUserIdInToken(req);
-   const expenditures = await ExpenditureDatamapper.findAllWithIconAndColor(user_id_for_db);
-
-   if(expenditures?.length){
-        res.status(200).json({ status: 200, data: expenditures});
-        return;
-    } else {
-        res.status(404).json({status: 404, message: "Aucune dépense" });
-        return;
-    }
-}
-
 export async function createExpenditure(req: AuthenticatedRequest, res: Response): Promise<void> {
     
     //On récupère l'id de l'utilisateur dans le token
     const user_id_for_db = getUserIdInToken(req);
 
-
-    //le budget_id se trouve dans le endpoint (route paramétrée) "/budgets/:budget_id/expenses"
-    const { budget_id } = req.params;
     //le reste est dans le body
-    const { description, payment_method, amount, date} = req.body;
-   // const amount_for_db = Number(amount)
+    const { budget_id, description, payment_method, amount, date} = req.body;
+
+    //Ce qui vient du body est de type string -> on convertit en number
     const amount_for_db = Number(amount.replace(',','.'))
+    const budget_id_for_db = Number(budget_id);
     
     let date_for_db: Date | null;
     if(date){
@@ -85,12 +79,7 @@ export async function createExpenditure(req: AuthenticatedRequest, res: Response
     } else{
         date_for_db=null; 
     }
-
-    //on convertit ce qui doit être convertit 
-    //Ce qui vient de la route est au format string, on veut un number 
-    const budget_id_for_db = Number(budget_id);
     
-    console.log("amount_for_db: ", amount_for_db)
     //Vérification de la validité du montant, réponse 400 avec un message personnalisé en cas d'échec
     const {error} = amountSchema.validate(amount_for_db);
     if (error) {
@@ -123,14 +112,13 @@ export async function createExpenditure(req: AuthenticatedRequest, res: Response
 
 export async function deleteExpenditure(req: AuthenticatedRequest, res: Response): Promise<void> {
      
-    const { expenditure_id, budget_id } = req.params;
+    const { expenditure_id } = req.params;
      const expenditure_id_for_db = Number(expenditure_id)
-     const budget_id_for_db = Number(budget_id)
 
     //On récupère l'id de l'utilisateur dans le token
     const user_id_for_db = getUserIdInToken(req);
 
-    const expenditure = await ExpenditureDatamapper.findById(expenditure_id_for_db, budget_id_for_db, user_id_for_db);
+    const expenditure = await ExpenditureDatamapper.findById(expenditure_id_for_db, user_id_for_db);
 
     if(expenditure){
         await ExpenditureDatamapper.destroy(expenditure);
@@ -144,15 +132,13 @@ export async function deleteExpenditure(req: AuthenticatedRequest, res: Response
 
 export async function updateExpenditure(req: AuthenticatedRequest, res: Response): Promise<void> {
 
-
-    const { expenditure_id, budget_id } = req.params;
-     const expenditure_id_for_db = Number(expenditure_id)
-     const budget_id_for_db = Number(budget_id)
+    const { expenditure_id} = req.params;
+    const expenditure_id_for_db = Number(expenditure_id)
 
     //On récupère l'id de l'utilisateur dans le token
     const user_id_for_db = getUserIdInToken(req);
 
-    const expenditure = await ExpenditureDatamapper.findById(expenditure_id_for_db, budget_id_for_db, user_id_for_db);
+    const expenditure = await ExpenditureDatamapper.findById(expenditure_id_for_db, user_id_for_db);
 
 
     const { description, payment_method, amount, date} = req.body;

@@ -5,16 +5,14 @@ import { catchErrors } from "../middlewares/catchErrors";
 
 const expenditureRouter = Router();
 
-expenditureRouter.get("/expenses/", authMiddleware, catchErrors(expenditureController.getAllExpenditures));
+expenditureRouter.get("/", authMiddleware, catchErrors(expenditureController.getAllExpenditures));
 
-expenditureRouter.get("/budgets/:budget_id/expenses/", authMiddleware, catchErrors(expenditureController.getExpendituresByBudget));
+expenditureRouter.get("/:expenditure_id", authMiddleware, catchErrors(expenditureController.getOneExpenditure));
 
-expenditureRouter.get("/budgets/:budget_id/expenses/:expenditure_id", authMiddleware, catchErrors(expenditureController.getOneExpenditure));
+expenditureRouter.post("/", authMiddleware, catchErrors(expenditureController.createExpenditure));
 
-expenditureRouter.post("/budgets/:budget_id/expenses/", authMiddleware, catchErrors(expenditureController.createExpenditure));
+expenditureRouter.patch("/:expenditure_id", authMiddleware, catchErrors(expenditureController.updateExpenditure));
 
-expenditureRouter.patch("/budgets/:budget_id/expenses/:expenditure_id", authMiddleware, catchErrors(expenditureController.updateExpenditure));
-
-expenditureRouter.delete("/budgets/:budget_id/expenses/:expenditure_id", authMiddleware, catchErrors(expenditureController.deleteExpenditure));
+expenditureRouter.delete("/:expenditure_id", authMiddleware, catchErrors(expenditureController.deleteExpenditure));
 
 export {expenditureRouter}
