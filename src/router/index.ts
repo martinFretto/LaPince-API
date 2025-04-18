@@ -8,7 +8,7 @@ import { userRouter } from './userRouter';
 const router = Router();
 
 router.use("/auth", authRouter);
-router.use("/", expenditureRouter)
+router.use("/expenses", expenditureRouter)
 router.use("/budgets", budgetRouter)
 router.use("/users", userRouter)
 export { router };
