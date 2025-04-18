@@ -2,6 +2,7 @@ import { db } from "../database/db";
 import { User } from "../models/User";
 import { UserObject } from "../types/ModelTypes";
 
+// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 class UserDatamapper {
     static async findByEmail(email: string): Promise<null|User> {
         const query = {

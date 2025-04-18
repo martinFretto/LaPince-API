@@ -2,6 +2,7 @@ import { db } from "../database/db";
 import { Expenditure, ExpenditureWithDetails } from "../models/Expenditure";
 import { ExpenditureObject } from "../types/ModelTypes";
 
+// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 class ExpenditureDatamapper {
 
     static async findById(id: number, budget_id: number, user_id: number): Promise<Expenditure| null> {
@@ -137,6 +138,7 @@ class ExpenditureDatamapper {
         };
 
         const result = await db.query(query);
+        // biome-ignore lint/complexity/noThisInStatic: <explanation>
         await this.updateBudgetAndUserAfterExpenditure(dataObj.user_id, dataObj.budget_id);
 
         if (!result.rowCount) {
@@ -158,6 +160,7 @@ class ExpenditureDatamapper {
     
         await db.query(query);
 
+        // biome-ignore lint/complexity/noThisInStatic: <explanation>
         await this.updateBudgetAndUserAfterExpenditure(expenditure.user_id, expenditure.budget_id);
       
     }
