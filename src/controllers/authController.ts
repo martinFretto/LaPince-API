@@ -8,12 +8,13 @@ import argon2 from "argon2"
 
 
 export async function registerUser(req: Request, res: Response) {
-
+    console.log("registerUser: récupération du body ")
     //Récupération des données du formulaire
     const { email, password, first_name, last_name } = req.body;
 
     //Vérification de la validité des données, réponse 400 avec un message personnalisé en cas d'échec
     const {error} = registerSchema.validate({email,password, first_name, last_name});
+    console.log("erreur de validation??: ", error)
     if (error) {
         res.status(400).json({
             message: "Validation échouée !",
@@ -24,19 +25,19 @@ export async function registerUser(req: Request, res: Response) {
 
     // On vérifie si un utilisateur avec cet email existe déjà
     const sameEmailUser = await UserDatamapper.findByEmail(email);
-
+    console.log("sameemail?: ", sameEmailUser)
     if (sameEmailUser){
         res.status(409).json({status: 409, message: "Cet email est déjà utilisé!" }); 
         return;
     }
 
     const hashedPassword: string = await argon2.hash(password);
-
+    console.log("hashpassword: ", hashedPassword)
     if(hashedPassword==="error"){
         res.status(500).json({status:500, message: "Une erreur est survenue lors du hashage votre mot de passe!" });
         return; 
     }
-
+    console.log("generate UserData")
     const userData: UserObject = {
         email: email,
         password: hashedPassword,
@@ -45,9 +46,9 @@ export async function registerUser(req: Request, res: Response) {
         total_budget: 0,  
         total_expenses: 0
     } 
-
+    console.log("userData: ", userData)
     const newUser = await UserDatamapper.create(userData);
-
+    console.log("newUser: ", newUser)
     //On vérifie bien qu'il n'y a pas eu d'erreur lors de l'insertion en BDD
     if(newUser){
         res.status(201).json({ status: 201, message: "Utilisateur créé"});
