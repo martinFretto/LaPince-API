@@ -1,4 +1,4 @@
-import { db } from "../database/db";
+import { db} from "../database/db";
 import { Budget } from "../models/Budget";
 import { BudgetObject } from "../types/ModelTypes";
 
