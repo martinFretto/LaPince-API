@@ -14,6 +14,7 @@ class UserDatamapper {
         console.log("results: ", results)
 
         if (!results.rowCount) {
+            console.log("Aucun utilisateur avec cet email na été trouvé: ")
             return null;
         }
 
