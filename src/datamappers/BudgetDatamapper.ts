@@ -2,6 +2,7 @@ import { db } from "../database/db";
 import { Budget } from "../models/Budget";
 import { BudgetObject } from "../types/ModelTypes";
 
+// biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 class BudgetDatamapper {
         // Trouve un budget spécifique par son ID et vérifie qu'il appartient bien à l'utilisateur.
     static async findById(id: number, user_id: number): Promise<Budget | null> {
