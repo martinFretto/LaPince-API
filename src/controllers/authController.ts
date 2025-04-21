@@ -14,7 +14,7 @@ export async function registerUser(req: Request, res: Response) {
 
     //Vérification de la validité des données, réponse 400 avec un message personnalisé en cas d'échec
     const {error} = registerSchema.validate({email,password, first_name, last_name});
-    console.log("erreur de validation??: ", error)
+
     if (error) {
         res.status(400).json({
             message: "Validation échouée !",
@@ -37,7 +37,7 @@ export async function registerUser(req: Request, res: Response) {
         res.status(500).json({status:500, message: "Une erreur est survenue lors du hashage votre mot de passe!" });
         return; 
     }
-    console.log("generate UserData")
+
     const userData: UserObject = {
         email: email,
         password: hashedPassword,
@@ -46,7 +46,7 @@ export async function registerUser(req: Request, res: Response) {
         total_budget: 0,  
         total_expenses: 0
     } 
-    console.log("userData: ", userData)
+
     const newUser = await UserDatamapper.create(userData);
     console.log("newUser: ", newUser)
     //On vérifie bien qu'il n'y a pas eu d'erreur lors de l'insertion en BDD

@@ -5,16 +5,16 @@ import { UserObject } from "../types/ModelTypes";
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 class UserDatamapper {
     static async findByEmail(email: string): Promise<null|User> {
-        console.log("findByEmail: ")
         const query = {
             text: 'SELECT * FROM "user" WHERE email = $1',
             values: [email],
         };
         console.log("DB: ", db)
         const results = await db.query(query);
-
+        console.log("results: ", results)
 
         if (!results.rowCount) {
+            console.log("Aucun utilisateur avec cet email na été trouvé: ")
             return null;
         }
 
