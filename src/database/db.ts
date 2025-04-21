@@ -9,13 +9,8 @@ const db = new Pool({
     host: process.env.PG_HOST,
     database:  process.env.PG_NAME,
     password:  process.env.PG_PASSWORD,
-    port: parseInt(process.env.PG_PORT || "5432"), 
+    port: Number(process.env.PG_PORT || "5432"), 
   });
   
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false, // Nécessaire pour Render
-    },
-});
-  export {db,pool}
+
+  export {db}
