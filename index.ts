@@ -3,7 +3,7 @@ import 'dotenv/config';
 import { router } from './src/router';
 import helmet from 'helmet';
 import { notFound } from './src/middlewares/notFound';
-import {cors} from 'cors';
+import cors from 'cors';
 
 const PORT = process.env.PORT || 3000;
 const app = express();
