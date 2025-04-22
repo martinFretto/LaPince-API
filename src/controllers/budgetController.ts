@@ -55,12 +55,12 @@ export async function createBudget(req: AuthenticatedRequest, res: Response): Pr
 
     const budgetData: BudgetObject = {
         name,
-        warning_amount,
-        spent_amount: spent_amount || 0,
-        allocated_amount,
-        color: color || null,
+        allocated_amount,               
         icon: icon || null,
+        warning_amount,
+        color: color || null,
         user_id: user_id_for_db,
+        spent_amount: spent_amount || 0,
     };
 
     const newBudget = await BudgetDatamapper.create(budgetData);
