@@ -3,14 +3,18 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const pool = new Pool({
+const db = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: {
         rejectUnauthorized: false, // Nécessaire pour Render
     },
 });
 
-export default pool;
+db.connect()
+    .then(() => console.log("Connexion réussie à PostgreSQL"))
+    .catch((err) => console.error("Erreur de connexion à PostgreSQL :", err));
 
 
-  export {pool}
+
+
+  export {db}
