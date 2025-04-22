@@ -4,13 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-<<<<<<< HEAD
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec ts-node index.ts"
-=======
+    "dev": "nodemon --exec ts-node index.ts",
     "test:func": "NODE_ENV NODE_OPTIONS=--experimental-vm-modules jest --testPathPattern=func.test.js",
-    "dev": "psql -U lapince -d lapince_bdwl -f ./data/create_data.sql && nodemon --exec ts-node index.ts"
->>>>>>> rectifications_CRUD_validation
   },
   "keywords": [],
   "author": "",
@@ -22,7 +17,8 @@
     "helmet": "^8.1.0",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
-    "pg": "^8.14.1"
+    "pg": "^8.14.1",
+    "pg-pool": "^3.8.0"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
