@@ -41,6 +41,10 @@ export async function getBudgetById(req: AuthenticatedRequest, res: Response): P
 export async function createBudget(req: AuthenticatedRequest, res: Response): Promise<void> {
     const user_id_for_db = getUserIdInToken(req);
 
+    const { name, warning_amount, allocated_amount, color, icon } = req.body;
+    const warning_amount_for_db = Number(warning_amount.replace(',','.'))
+    const allocated_amount_for_db = Number(allocated_amount.replace(',','.'))
+
     const { error } = budgetSchema.validate(req.body);
     if (error) {
         res.status(400).json({
@@ -49,15 +53,12 @@ export async function createBudget(req: AuthenticatedRequest, res: Response): Pr
         });
         return;
     }
-
-    const { name, warning_amount, spent_amount, allocated_amount, color, icon } = req.body;
     
-
-    const budgetData: BudgetObject = {
+    const budgetData = {
         name,
-        warning_amount,
-        spent_amount: spent_amount || 0,
-        allocated_amount,
+        warning_amount: warning_amount_for_db,
+        spent_amount: 0,
+        allocated_amount: allocated_amount_for_db,
         color: color || null,
         icon: icon || null,
         user_id: user_id_for_db,
