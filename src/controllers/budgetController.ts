@@ -76,9 +76,9 @@ export async function createBudget(req: AuthenticatedRequest, res: Response): Pr
 }
 
 export async function updateBudget(req: AuthenticatedRequest, res: Response): Promise<void> {
-    const { budget_id } = req.params;
+    const { id } = req.params;
     const user_id_for_db = getUserIdInToken(req);
-    const budget_id_for_db = Number(budget_id);
+    const budget_id_for_db = Number(id);
 
     const budget = await BudgetDatamapper.findById(budget_id_for_db, user_id_for_db);
 
@@ -120,9 +120,9 @@ export async function updateBudget(req: AuthenticatedRequest, res: Response): Pr
 }
 
 export async function deleteBudget(req: AuthenticatedRequest, res: Response): Promise<void> {
-    const { budget_id } = req.params;
+    const { id } = req.params;
     const user_id_for_db = getUserIdInToken(req);
-    const budget_id_for_db = Number(budget_id);
+    const budget_id_for_db = Number(id);
 
     const budget = await BudgetDatamapper.findById(budget_id_for_db, user_id_for_db);
 
