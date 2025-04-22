@@ -142,7 +142,7 @@ export async function updateExpenditure(req: AuthenticatedRequest, res: Response
 
 
     const { description, payment_method, amount, date} = req.body;
-    const amount_for_db = Number(amount)
+    const amount_for_db = Number(amount.replace(',','.'))
 
     //Vérification de la validité du montant, réponse 400 avec un message personnalisé en cas d'échec
     const {error} = amountSchema.validate(amount_for_db);
