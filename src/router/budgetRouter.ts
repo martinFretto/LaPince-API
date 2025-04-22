@@ -10,7 +10,7 @@ budgetRouter.get("/",authMiddleware, catchErrors(budgetController.getAllBudgets)
 
 budgetRouter.get("/:id",authMiddleware, catchErrors(budgetController.getBudgetById));
 
-budgetRouter.post("/",authMiddleware, catchErrors(budgetController.createBudget));
+budgetRouter.post("/",authMiddleware, budgetController.createBudget);
 
 budgetRouter.patch("/:id",authMiddleware, catchErrors(budgetController.updateBudget));
 
