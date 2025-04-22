@@ -45,7 +45,7 @@ export async function createBudget(req: AuthenticatedRequest, res: Response): Pr
     const warning_amount_for_db = Number(warning_amount.replace(',','.'))
     const allocated_amount_for_db = Number(allocated_amount.replace(',','.'))
 
-    const { error } = budgetSchema.validate(req.body);
+    const { error } = budgetSchema.validate({ name, warning_amount, allocated_amount, color, icon });
     if (error) {
         res.status(400).json({
             message: "Validation échouée.",
