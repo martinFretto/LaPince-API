@@ -43,8 +43,16 @@ export async function createBudget(req: AuthenticatedRequest, res: Response): Pr
     console.log(user_id_for_db);
     
     const { name, warning_amount, allocated_amount, color, icon } = req.body;
-    const warning_amount_for_db = Number(warning_amount.replace(',','.'))
-    const allocated_amount_for_db = Number(allocated_amount.replace(',','.'))
+    const warning_amount_for_db = 
+    typeof warning_amount === "string" 
+    ? Number(warning_amount.replace(',', '.')) 
+    : Number(warning_amount);
+
+const allocated_amount_for_db = 
+    typeof allocated_amount === "string" 
+    ? Number(allocated_amount.replace(',', '.')) 
+    : Number(allocated_amount);
+
 
     const { error } = budgetSchema.validate({ name, warning_amount_for_db, allocated_amount_for_db, color, icon });
     if (error) {
