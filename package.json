@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --exec ts-node index.ts",
-    "test:func": "NODE_ENV NODE_OPTIONS=--experimental-vm-modules jest --testPathPattern=func.test.js",
+    "test:func": "NODE_ENV NODE_OPTIONS=--experimental-vm-modules jest --testPathPattern=func.test.js"
   },
   "keywords": [],
   "author": "",
