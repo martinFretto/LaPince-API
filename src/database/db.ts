@@ -17,5 +17,6 @@ const db = new Pool({
     ssl: {
         rejectUnauthorized: false, // Nécessaire pour Render
     },
-});
+  });
+  
   export {db,pool}

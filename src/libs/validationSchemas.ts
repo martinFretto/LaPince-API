@@ -60,10 +60,12 @@ export const amountSchema = Joi.number()
 });
 
 export const budgetSchema = Joi.object({
-    name: Joi.string().max(255).optional(),
-    warning_amount: Joi.number().min(0).optional(),
-    spent_amount: Joi.number().min(0).optional(),
-    allocated_amount: Joi.number().min(0).optional(),
+    name: Joi.string().max(255).required(),
+    warning_amount_for_db: amountSchema,
+    allocated_amount_for_db: amountSchema,
     color: Joi.string().max(255).optional(),
-    icon: Joi.string().max(255).optional(),
-}).options({ allowUnknown: true });
+    icon: Joi.string().optional(),
+}).messages({
+        "any.required": "Le champ titre du budget est obligatoire.",
+        "string.empty": "Le champ titre du budget est obligatoire."
+});

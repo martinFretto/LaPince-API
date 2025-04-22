@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { getUserIdInToken } from "../libs/jwtToken";
 import { BudgetDatamapper } from "../datamappers/BudgetDatamapper";
 import { BudgetObject } from "../types/ModelTypes";
-import { budgetSchema } from "../libs/validationSchemas";
+import { amountSchema, budgetSchema } from "../libs/validationSchemas";
 
 interface AuthenticatedRequest extends Request {
     token?: string;
@@ -41,7 +41,12 @@ export async function getBudgetById(req: AuthenticatedRequest, res: Response): P
 export async function createBudget(req: AuthenticatedRequest, res: Response): Promise<void> {
     const user_id_for_db = getUserIdInToken(req);
 
-    const { error } = budgetSchema.validate(req.body);
+    const { name, warning_amount, allocated_amount, color, icon } = req.body;
+    const warning_amount_for_db = Number(warning_amount.replace(',','.'))
+    const allocated_amount_for_db = Number(allocated_amount.replace(',','.'))
+
+
+    const { error } = budgetSchema.validate({ name, warning_amount_for_db, allocated_amount_for_db, color, icon });
     if (error) {
         res.status(400).json({
             message: "Validation échouée.",
@@ -50,14 +55,11 @@ export async function createBudget(req: AuthenticatedRequest, res: Response): Pr
         return;
     }
 
-    const { name, warning_amount, spent_amount, allocated_amount, color, icon } = req.body;
-    
-
     const budgetData: BudgetObject = {
         name,
-        warning_amount,
-        spent_amount: spent_amount || 0,
-        allocated_amount,
+        warning_amount: warning_amount_for_db,
+        spent_amount: 0,
+        allocated_amount: allocated_amount_for_db,
         color: color || null,
         icon: icon || null,
         user_id: user_id_for_db,
@@ -100,7 +102,8 @@ export async function updateBudget(req: AuthenticatedRequest, res: Response): Pr
     const updateData: Partial<BudgetObject> = {
         id: budget.id,
         name: name || budget.name,
-        warning_amount: warning_amount ?? budget.warning_amount,        
+        warning_amount: warning_amount ?? budget.warning_amount,   
+        spent_amount:  budget.spent_amount,
         allocated_amount: allocated_amount ?? budget.allocated_amount,
         color: color || budget.color,
         icon: icon || budget.icon,
