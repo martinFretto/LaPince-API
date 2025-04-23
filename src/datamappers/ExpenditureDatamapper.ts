@@ -126,7 +126,7 @@ class ExpenditureDatamapper {
                 payment_method = $2,
                 amount = $3,
                 date = $4
-                WHERE id = $5 and budget_id
+                WHERE id = $5
                 RETURNING *;`,
             values: [
                 dataObj.description,
@@ -136,7 +136,7 @@ class ExpenditureDatamapper {
                 dataObj.id
             ],
         };
-
+        console.log("UPDATE REQUEST: ", query)
         const result = await db.query(query);
         // biome-ignore lint/complexity/noThisInStatic: <explanation>
         await this.updateBudgetAndUserAfterExpenditure(dataObj.user_id, dataObj.budget_id);
