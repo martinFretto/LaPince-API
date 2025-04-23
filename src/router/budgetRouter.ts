@@ -12,8 +12,8 @@ budgetRouter.get("/:id",authMiddleware, catchErrors(budgetController.getBudgetBy
 
 budgetRouter.post("/",authMiddleware, budgetController.createBudget);
 
-budgetRouter.patch("/:id",authMiddleware, catchErrors(budgetController.updateBudget));
+budgetRouter.patch("/:id",authMiddleware, budgetController.updateBudget);
 
-budgetRouter.delete("/:id",authMiddleware, catchErrors(budgetController.deleteBudget));
+budgetRouter.delete("/:id",authMiddleware,budgetController.deleteBudget);
 
 export {budgetRouter}
