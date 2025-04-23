@@ -96,6 +96,11 @@ export async function updateBudget(req: AuthenticatedRequest, res: Response): Pr
     const budget_id_for_db = Number(id);
 
     const { name, warning_amount, allocated_amount, color, icon } = req.body;
+
+    console.log("REPLACE?: ", typeof allocated_amount)
+    
+    console.log("REPLACE?: ", typeof warning_amount)
+
     const allocated_amount_for_db = Number(allocated_amount.replace(',','.'))
     const warning_amount_for_db = Number(warning_amount.replace(',','.'))
 
