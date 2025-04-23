@@ -53,7 +53,13 @@ const allocated_amount_for_db =
     ? Number(allocated_amount.replace(',', '.')) 
     : Number(allocated_amount);
 
-
+    if (warning_amount_for_db >= allocated_amount_for_db) {
+        res.status(400).json({
+            message: "Le montant d'alerte  doit être inférieur au montant alloué ."
+        });
+        return;
+    }
+    
     const { error } = budgetSchema.validate({ name, warning_amount_for_db, allocated_amount_for_db, color, icon });
     if (error) {
         res.status(400).json({
