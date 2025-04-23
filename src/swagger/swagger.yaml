@@ -1,0 +1,107 @@
+openapi: 3.0.0
+info:
+  title: API de Gestion des Budgets et Dépenses
+  description: Documentation interactive pour gérer les budgets et les dépenses des utilisateurs.
+  version: 1.0.0
+
+servers:
+  - url: https://projet-la-pince-back-1.onrender.com
+    description: Serveur de production
+  - url: http://localhost:3000
+    description: Serveur de développement
+
+paths:
+  /auth/register:
+    post:
+      summary: Inscription utilisateur
+      description: Permet à un nouvel utilisateur de s'inscrire.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  example: "Jean-Jacques"
+                last_name:
+                  type: string
+                  example: "Dupont"
+                email:
+                  type: string
+                  example: "Jeanjean@example.com"
+                password:
+                  type: string
+                  example: "Password123"
+      responses:
+        "201":
+          description: Utilisateur créé avec succès
+        "400":
+          description: Erreur de validation (champs manquants ou invalides)
+        "409":
+          description: Email déjà utilisé
+
+  /users/{user_id}:
+    get:
+      summary: Récupérer les informations d'un utilisateur
+      description: Retourne les données du profil de l'utilisateur.
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Informations de l'utilisateur
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Utilisateur introuvable
+
+  /budgets:
+    post:
+      summary: Créer un budget
+      description: Ajoute un nouveau budget pour un utilisateur.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Budget"
+      responses:
+        "201":
+          description: Budget créé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Budget"
+        "400":
+          description: Erreur de validation des données
+
+    get:
+      summary: Récupérer tous les budgets d'un utilisateur
+      description: Retourne la liste des budgets associés à l'utilisateur.
+      responses:
+        "200":
+          description: Liste des budgets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Budget"
+
+  /expenses:
+    post:
+      summary: Ajouter une dépense
+      description: Enregistre une nouvelle dépense pour un utilisateur.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Expenditure"
