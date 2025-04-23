@@ -60,7 +60,7 @@ export const amountSchema = Joi.number()
 });
 
 export const budgetSchema = Joi.object({
-    name: Joi.string().max(255).required(),
+    name: Joi.string().max(255).required().empty(""),
     warning_amount_for_db: amountSchema,
     allocated_amount_for_db: amountSchema,
     color: Joi.string().max(255).optional(),
