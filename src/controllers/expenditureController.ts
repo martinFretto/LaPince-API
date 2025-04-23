@@ -18,7 +18,8 @@ export async function getAllExpenditures(req: AuthenticatedRequest, res: Respons
     const user_id_for_db = getUserIdInToken(req);
     
     
-    let expenditures; 
+    
+            let expenditures; 
 
     console.log("budgetId??: ", budgetId)
 
@@ -40,11 +41,11 @@ export async function getAllExpenditures(req: AuthenticatedRequest, res: Respons
 
 export async function getOneExpenditure(req: AuthenticatedRequest, res: Response): Promise<void> {
      //le budget_id se trouve dans le endpoint (route paramétrée) "/expenses"
-     const { expenditure_id, budget_id } = req.params;
+     const { expenditure_id} = req.params;
      //on convertit ce qui doit être convertit 
     //Ce qui vient du token est de la route est au format string, on veut des number 
      const expenditure_id_for_db = Number(expenditure_id)
-     const budget_id_for_db = Number(budget_id)
+    
 
     //On récupère l'id de l'utilisateur dans le token
     const user_id_for_db = getUserIdInToken(req);

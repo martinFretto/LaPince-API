@@ -84,6 +84,7 @@ const allocated_amount_for_db =
     if (newBudget) {
         res.status(201).json({ status: 201, message: "Budget créé avec succès.", data: newBudget });
         return;
+    // biome-ignore lint/style/noUselessElse: <explanation>
     } else {
         res.status(500).json({ status: 500, message: "Une erreur est survenue lors de la création du budget." });
         return;
@@ -101,6 +102,13 @@ export async function updateBudget(req: AuthenticatedRequest, res: Response): Pr
 
     if (!budget) {
         res.status(404).json({ status: 404, message: "Ce budget est introuvable." });
+        return;
+    }
+
+    if (warning_amount >= allocated_amount) {
+        res.status(400).json({
+            message: "Le montant d'alerte  doit être inférieur au montant alloué ."
+        });
         return;
     }
 
