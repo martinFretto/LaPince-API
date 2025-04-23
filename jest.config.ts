@@ -9,7 +9,6 @@ export default {
     },
   },
   setupFilesAfterEnv: ['./tests/func/setup-jest.ts'],
-  testPathPattern: ['func.test.ts']
 };
 
 
