@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { getUserIdInToken } from "../libs/jwtToken";
 import { BudgetDatamapper } from "../datamappers/BudgetDatamapper";
 import { BudgetObject } from "../types/ModelTypes";
-import { amountSchema, budgetSchema } from "../libs/validationSchemas";
+import { budgetSchema } from "../libs/validationSchemas";
 
 interface AuthenticatedRequest extends Request {
     token?: string;
@@ -39,10 +39,8 @@ export async function getBudgetById(req: AuthenticatedRequest, res: Response): P
 }
 
 export async function createBudget(req: AuthenticatedRequest, res: Response): Promise<void> {
-    console.log("createbudget, TOKEN?: ")
+
     const user_id_for_db = getUserIdInToken(req);
-    console.log("createbudget, TOKEN? réponse: ", user_id_for_db)
-    console.log(user_id_for_db);
     
     const { name, warning_amount, allocated_amount, color, icon } = req.body;
     const warning_amount_for_db = 

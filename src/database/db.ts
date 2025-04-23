@@ -20,7 +20,7 @@ const db = new Pool({
   });
   
   db.connect()
-    .then(() => console.log("Connexion réussie à PostgreSQL"))
-    .catch((err) => console.error("Erreur de connexion à PostgreSQL :", err));
+   // .then(() => console.log("Connexion réussie à PostgreSQL"))
+   // .catch((err) => console.error("Erreur de connexion à PostgreSQL :", err));
 
   export {db}

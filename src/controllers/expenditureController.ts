@@ -17,10 +17,7 @@ export async function getAllExpenditures(req: AuthenticatedRequest, res: Respons
     //On récupère l'id de l'utilisateur dans le token
     const user_id_for_db = getUserIdInToken(req);
     
-    
     let expenditures; 
-
-    console.log("budgetId??: ", budgetId)
 
     if(budgetId){
         const budget_id_for_db = Number(budgetId)

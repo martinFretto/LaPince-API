@@ -154,8 +154,8 @@ class ExpenditureDatamapper {
         //On précise dans la requête l'user id(pour ne pas qu'un utilisateur puisse supprimer la dépense d'un autre via une requête dans l'url)
         //On précise également le budget
         const query = {
-            text: `DELETE FROM "expenditure" WHERE id = $1 and budget_id = $2 and user_id = $3;`,
-            values: [expenditure.id, expenditure.budget_id, expenditure.user_id],
+            text: `DELETE FROM "expenditure" WHERE id = $1;`,
+            values: [expenditure.id],
         };
     
         await db.query(query);
