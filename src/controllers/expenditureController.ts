@@ -39,12 +39,11 @@ export async function getAllExpenditures(req: AuthenticatedRequest, res: Respons
  }
 
 export async function getOneExpenditure(req: AuthenticatedRequest, res: Response): Promise<void> {
-     //le budget_id se trouve dans le endpoint (route paramétrée) "/budgets/:budget_id/expenses"
-     const { expenditure_id, budget_id } = req.params;
+     //le budget_id se trouve dans le endpoint (route paramétrée) "/expenses"
+     const { expenditure_id} = req.params;
      //on convertit ce qui doit être convertit 
     //Ce qui vient du token est de la route est au format string, on veut des number 
      const expenditure_id_for_db = Number(expenditure_id)
-     const budget_id_for_db = Number(budget_id)
 
     //On récupère l'id de l'utilisateur dans le token
     const user_id_for_db = getUserIdInToken(req);
@@ -69,8 +68,12 @@ export async function createExpenditure(req: AuthenticatedRequest, res: Response
     //le reste est dans le body
     const { budget_id, description, payment_method, amount, date} = req.body;
 
-    //Ce qui vient du body est de type string -> on convertit en number
-    const amount_for_db = Number(amount.replace(',','.'))
+
+    const amount_for_db = 
+    typeof amount === "string" 
+    ? Number(amount.replace(',', '.')) 
+    : amount;
+
     const budget_id_for_db = Number(budget_id);
     
     let date_for_db: Date | null;
@@ -142,7 +145,11 @@ export async function updateExpenditure(req: AuthenticatedRequest, res: Response
 
 
     const { description, payment_method, amount, date} = req.body;
-    const amount_for_db = Number(amount.replace(',','.'))
+    
+    const amount_for_db = 
+    typeof amount === "string" 
+    ? Number(amount.replace(',', '.')) 
+    : amount;
 
     //Vérification de la validité du montant, réponse 400 avec un message personnalisé en cas d'échec
     const {error} = amountSchema.validate(amount_for_db);
@@ -180,4 +187,3 @@ export async function updateExpenditure(req: AuthenticatedRequest, res: Response
          return;
     }    
 }
-

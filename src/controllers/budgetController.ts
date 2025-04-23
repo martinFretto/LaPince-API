@@ -39,21 +39,29 @@ export async function getBudgetById(req: AuthenticatedRequest, res: Response): P
 }
 
 export async function createBudget(req: AuthenticatedRequest, res: Response): Promise<void> {
+    console.log("createbudget, TOKEN?: ")
     const user_id_for_db = getUserIdInToken(req);
+    console.log("createbudget, TOKEN? réponse: ", user_id_for_db)
     console.log(user_id_for_db);
     
     const { name, warning_amount, allocated_amount, color, icon } = req.body;
     const warning_amount_for_db = 
     typeof warning_amount === "string" 
     ? Number(warning_amount.replace(',', '.')) 
-    : Number(warning_amount);
+    : warning_amount;
 
 const allocated_amount_for_db = 
     typeof allocated_amount === "string" 
     ? Number(allocated_amount.replace(',', '.')) 
-    : Number(allocated_amount);
+    : allocated_amount
 
-
+    if (warning_amount_for_db >= allocated_amount_for_db) {
+        res.status(400).json({
+            message: "Le montant d'alerte  doit être inférieur au montant alloué ."
+        });
+        return;
+    }
+    
     const { error } = budgetSchema.validate({ name, warning_amount_for_db, allocated_amount_for_db, color, icon });
     if (error) {
         res.status(400).json({
@@ -90,8 +98,6 @@ export async function updateBudget(req: AuthenticatedRequest, res: Response): Pr
     const budget_id_for_db = Number(id);
 
     const { name, warning_amount, allocated_amount, color, icon } = req.body;
-    const allocated_amount_for_db = Number(allocated_amount.replace(',','.'))
-    const warning_amount_for_db = Number(warning_amount.replace(',','.'))
 
     const budget = await BudgetDatamapper.findById(budget_id_for_db, user_id_for_db);
 
@@ -100,7 +106,7 @@ export async function updateBudget(req: AuthenticatedRequest, res: Response): Pr
         return;
     }
 
-    const { error } = budgetSchema.validate({ name, warning_amount_for_db, allocated_amount_for_db, color, icon });
+    const { error } = budgetSchema.validate({ name, color, icon });
     if (error) {
         res.status(400).json({
             message: "Validation échouée.",
@@ -114,9 +120,9 @@ export async function updateBudget(req: AuthenticatedRequest, res: Response): Pr
     const updateData: Partial<BudgetObject> = {
         id: budget.id,
         name: name || budget.name,
-        warning_amount: warning_amount_for_db ?? budget.warning_amount,   
+        warning_amount: warning_amount ?? budget.warning_amount,   
         spent_amount:  budget.spent_amount,
-        allocated_amount: allocated_amount_for_db ?? budget.allocated_amount,
+        allocated_amount: allocated_amount ?? budget.allocated_amount,
         color: color || budget.color,
         icon: icon || budget.icon,
     };

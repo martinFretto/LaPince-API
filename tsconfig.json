@@ -1,12 +1,4 @@
-/*{
-  "compilerOptions": {
-    "module": "ESNext",
-    "target": "ES2020",
-    "moduleResolution": "NodeNext",
-    "esModuleInterop": true,
-    "resolveJsonModule": true
-  }
-}*/
+
 
 {
   "compilerOptions": {
