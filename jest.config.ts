@@ -5,7 +5,10 @@ export default {
   globals: {
     'ts-jest': {
       useESM: true,
+      tsconfig: 'tsconfig.test.json'
     },
   },
-  setupFilesAfterEnv: ['./tests/func/setup-jest.ts'],
 };
+
+
+

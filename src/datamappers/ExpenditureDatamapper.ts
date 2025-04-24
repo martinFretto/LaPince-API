@@ -56,7 +56,6 @@ class ExpenditureDatamapper {
     static async findAllWithIconAndColor(user_id: number): Promise<ExpenditureWithDetails[]|null> {
         //Le Budget_ID est suffisant pour la requête
         //Mais on vérifie que le budget appartient bien à l'utilisateur authentifié
-        console.log("requête préparée")
         const query = {
             text: 
             `SELECT expenditure.id, expenditure.budget_id, date, description, amount, budget.color, budget.icon FROM expenditure
@@ -64,10 +63,8 @@ class ExpenditureDatamapper {
             WHERE expenditure.user_id= $1 ORDER BY date DESC;`,
             values: [user_id],
         };
-        console.log("requête préparée: ")
 
         const results = await db.query(query);
-        console.log("results: ", results)
 
         if (!results.rowCount) {
             return null;
@@ -126,7 +123,7 @@ class ExpenditureDatamapper {
                 payment_method = $2,
                 amount = $3,
                 date = $4
-                WHERE id = $5 and budget_id
+                WHERE id = $5
                 RETURNING *;`,
             values: [
                 dataObj.description,
@@ -136,7 +133,7 @@ class ExpenditureDatamapper {
                 dataObj.id
             ],
         };
-
+        console.log("UPDATE REQUEST: ", query)
         const result = await db.query(query);
         // biome-ignore lint/complexity/noThisInStatic: <explanation>
         await this.updateBudgetAndUserAfterExpenditure(dataObj.user_id, dataObj.budget_id);
@@ -154,8 +151,8 @@ class ExpenditureDatamapper {
         //On précise dans la requête l'user id(pour ne pas qu'un utilisateur puisse supprimer la dépense d'un autre via une requête dans l'url)
         //On précise également le budget
         const query = {
-            text: `DELETE FROM "expenditure" WHERE id = $1 and budget_id = $2 and user_id = $3;`,
-            values: [expenditure.id, expenditure.budget_id, expenditure.user_id],
+            text: `DELETE FROM "expenditure" WHERE id = $1;`,
+            values: [expenditure.id],
         };
     
         await db.query(query);

@@ -8,7 +8,6 @@ import argon2 from "argon2"
 
 
 export async function registerUser(req: Request, res: Response) {
-    console.log("registerUser: récupération du body ")
     //Récupération des données du formulaire
     const { email, password, first_name, last_name } = req.body;
 
@@ -25,14 +24,14 @@ export async function registerUser(req: Request, res: Response) {
 
     // On vérifie si un utilisateur avec cet email existe déjà
     const sameEmailUser = await UserDatamapper.findByEmail(email);
-    console.log("sameemail?: ", sameEmailUser)
+
     if (sameEmailUser){
         res.status(409).json({status: 409, message: "Cet email est déjà utilisé!" }); 
         return;
     }
 
     const hashedPassword: string = await argon2.hash(password);
-    console.log("hashpassword: ", hashedPassword)
+
     if(hashedPassword==="error"){
         res.status(500).json({status:500, message: "Une erreur est survenue lors du hashage votre mot de passe!" });
         return; 
@@ -48,7 +47,6 @@ export async function registerUser(req: Request, res: Response) {
     } 
 
     const newUser = await UserDatamapper.create(userData);
-    console.log("newUser: ", newUser)
     //On vérifie bien qu'il n'y a pas eu d'erreur lors de l'insertion en BDD
     if(newUser){
         res.status(201).json({ status: 201, message: "Utilisateur créé"});
@@ -99,8 +97,6 @@ export async function loginUser(req: Request, res: Response): Promise<void> {
         email: user.email
     }
     const jwtToken = generateToken(tokenPayload);
-
-    console.log("jwttoken: ", jwtToken);
   
     res.status(201).json({ status: 201, message: "token généré", token: jwtToken});
     return;

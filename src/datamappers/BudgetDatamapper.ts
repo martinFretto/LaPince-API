@@ -103,6 +103,7 @@ class BudgetDatamapper {
         };
 
         await db.query(query);
+        
         return true;
     }
 }

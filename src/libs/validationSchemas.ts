@@ -63,8 +63,8 @@ export const budgetSchema = Joi.object({
     name: Joi.string().max(255).required().empty(""),
     warning_amount_for_db: amountSchema,
     allocated_amount_for_db: amountSchema,
-    color: Joi.string().max(255).optional(),
-    icon: Joi.string().optional(),
+    color: Joi.string().max(255).optional().allow(''),
+    icon: Joi.string().optional().allow(''),
 }).messages({
         "any.required": "Le champ titre du budget est obligatoire.",
         "string.empty": "Le champ titre du budget est obligatoire."
