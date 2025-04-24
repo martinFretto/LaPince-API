@@ -56,7 +56,6 @@ class ExpenditureDatamapper {
     static async findAllWithIconAndColor(user_id: number): Promise<ExpenditureWithDetails[]|null> {
         //Le Budget_ID est suffisant pour la requête
         //Mais on vérifie que le budget appartient bien à l'utilisateur authentifié
-        console.log("requête préparée")
         const query = {
             text: 
             `SELECT expenditure.id, expenditure.budget_id, date, description, amount, budget.color, budget.icon FROM expenditure
@@ -64,10 +63,8 @@ class ExpenditureDatamapper {
             WHERE expenditure.user_id= $1 ORDER BY date DESC;`,
             values: [user_id],
         };
-        console.log("requête préparée: ")
 
         const results = await db.query(query);
-        console.log("results: ", results)
 
         if (!results.rowCount) {
             return null;

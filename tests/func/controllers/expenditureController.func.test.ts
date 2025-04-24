@@ -5,11 +5,11 @@ import { createExpenditure } from "../../../src/controllers/expenditureControlle
 import { TokenPayloadType } from "../../../src/types/TokenPayloadType";
 import '../global-setup-jest';
 
-const tokenPayload2: TokenPayloadType ={
+const tokenPayload: TokenPayloadType ={
     id: 3,
     email: "johnny@gmail.com"
 }
-const mockTocken2 = generateToken(tokenPayload2);
+const mockTocken = generateToken(tokenPayload);
 
 describe('testing createExpenditure from expenditureController', () => {
     test('Valid data returns 201 with message Dépense créée', async()=>{
@@ -22,7 +22,7 @@ describe('testing createExpenditure from expenditureController', () => {
                 payment_method: "card",
                 amount: 150
             },
-            token: mockTocken2
+            token: mockTocken
             //C'est le middleware d'authentification qui rajoute le token venant du front dans une clé "token"
             //Il transmet ensuite cette requête au controller
         } as Partial<Request>;
@@ -46,7 +46,7 @@ describe('testing createExpenditure from expenditureController', () => {
                 payment_method: "card",
                 amount: 20
             },
-            token: mockTocken2
+            token: mockTocken
             //C'est le middleware d'authentification qui rajoute le token venant du front dans une clé "token"
             //Il transmet ensuite cette requête au controller
         } as Partial<Request>;

@@ -150,11 +150,9 @@ export async function updateExpenditure(req: AuthenticatedRequest, res: Response
     ? Number(amount.replace(',', '.')) 
     : amount;
 
-    console.log("Amount_for_db? ", amount_for_db, "  type??: ", typeof amount_for_db )
     //Vérification de la validité du montant, réponse 400 avec un message personnalisé en cas d'échec
     const {error} = amountSchema.validate(amount_for_db);
     if (error) {
-        console.log("ERROR? ", error.details);
         res.status(400).json({
             message: "Validation échouée !",
             details: error.details.map((detail)=>detail.message)
@@ -168,10 +166,8 @@ export async function updateExpenditure(req: AuthenticatedRequest, res: Response
     } else{
         date_for_db=null; 
     }  
-    console.log("DATE FOR DB? ", date);
     
     if(expenditure){
-        console.log("DEPENSE EXISTANTE? ");
         const expenditureData: ExpenditureObject = {
             id: expenditure.id,
             description: description? description: null,
@@ -182,7 +178,6 @@ export async function updateExpenditure(req: AuthenticatedRequest, res: Response
             user_id: expenditure.user_id
         } 
 
-        console.log("UPDATE? ", date);
         const updatedExpenditure = await ExpenditureDatamapper.update(expenditureData);
         res.status(201).json({ status: 200, message: "dépense modifiée", data: updatedExpenditure});
         return;

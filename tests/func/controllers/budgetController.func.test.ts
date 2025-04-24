@@ -3,7 +3,7 @@ import {describe, expect, test, jest} from '@jest/globals';
 import { generateToken } from "../../../src/libs/jwtToken";
 import { createExpenditure } from "../../../src/controllers/expenditureController";
 import { TokenPayloadType } from "../../../src/types/TokenPayloadType";
-import { createBudget } from "../../../src/controllers/budgetController";
+import { createBudget, deleteBudget } from "../../../src/controllers/budgetController";
 import '../global-setup-jest';
 
 
@@ -142,26 +142,15 @@ describe('testing createBudget from budgetController', () => {
     });
 });
 
-const tokenPayload2: TokenPayloadType ={
-    id: 3,
-    email: "johnny@gmail.com"
-}
-const mockTocken2 = generateToken(tokenPayload2);
+describe('testing deleteBudget from budgetController', () => {
 
-describe('testing createExpenditure from expenditureController', () => {
-    test('Valid data returns 201 with message Dépense créée', async()=>{
-
+    test('Delete budget that don\'t belong to user returns 404 with message Le budget que vous souhaitez supprimer n\'existe pas.', async()=>{
+       
         const request = {
-            body:  {
-                budget_id: "6",
-                description: "billet TGV",
-                date: "2012-12-12T00:00:00.000Z",
-                payment_method: "card",
-                amount: 150
+            params: {
+                id: "1"
             },
-            token: mockTocken2
-            //C'est le middleware d'authentification qui rajoute le token venant du front dans une clé "token"
-            //Il transmet ensuite cette requête au controller
+            token: mockTocken 
         } as Partial<Request>;
           
         const response = {
@@ -169,32 +158,30 @@ describe('testing createExpenditure from expenditureController', () => {
             json: jest.fn()
         } as Partial<Response>;
 
-        await createExpenditure(request as Request, response as Response);
-        expect(response.status).toHaveBeenCalledWith(201);
-        expect(response.json).toHaveBeenCalledWith({ status: 201, message: "Dépense créée"});
+        await deleteBudget(request as Request, response as Response);
+        expect(response.status).toHaveBeenCalledWith(404);
+        expect(response.json).toHaveBeenCalledWith({ status: 404, message: "Le budget que vous souhaitez supprimer n'existe pas." });
     });
-    test('Empty string for description returns 201 with message Dépense créée', async()=>{
 
+    test('Delete budget that belong to user returns 204', async()=>{
+       
         const request = {
-            body:  {
-                budget_id: "6",
-                description: "",
-                date: "2012-12-12T00:00:00.000Z",
-                payment_method: "card",
-                amount: 20
+            params: {
+                id: "3"
             },
-            token: mockTocken2
-            //C'est le middleware d'authentification qui rajoute le token venant du front dans une clé "token"
-            //Il transmet ensuite cette requête au controller
+            token: mockTocken 
         } as Partial<Request>;
+
+        const sendMock = jest.fn();
+        const statusMock = jest.fn(() => ({ send: sendMock }));
           
         const response = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn()
-        } as Partial<Response>;
+            status: statusMock,
+        } as unknown as Response;
 
-        await createExpenditure(request as Request, response as Response);
-        expect(response.status).toHaveBeenCalledWith(201);
-        expect(response.json).toHaveBeenCalledWith({ status: 201, message: "Dépense créée"});
+        await deleteBudget(request as Request, response as Response);
+        expect(statusMock).toHaveBeenCalledWith(204);
+        expect(sendMock).toHaveBeenCalled();
     });
 });
+
