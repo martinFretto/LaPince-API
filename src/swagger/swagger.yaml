@@ -1,14 +1,13 @@
 openapi: 3.0.0
 info:
-  title: API de Gestion des Budgets et Dépenses
+  title: Swagger Lapince Gestion des Budgets et Dépenses
   description: Documentation interactive pour gérer les budgets et les dépenses des utilisateurs.
   version: 1.0.0
 
 servers:
   - url: https://projet-la-pince-back-1.onrender.com
     description: Serveur de production
-  - url: http://localhost:3000
-    description: Serveur de développement
+  
 
 paths:
   /auth/register:
