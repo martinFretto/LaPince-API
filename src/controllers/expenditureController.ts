@@ -17,13 +17,7 @@ export async function getAllExpenditures(req: AuthenticatedRequest, res: Respons
     //On récupère l'id de l'utilisateur dans le token
     const user_id_for_db = getUserIdInToken(req);
     
-<<<<<<< HEAD
-    
-    
-            let expenditures; 
-=======
     let expenditures; 
->>>>>>> 694ba15158842d34226b8a9e2a22bd841fccf4dd
 
     if(budgetId){
         const budget_id_for_db = Number(budgetId)
@@ -47,10 +41,6 @@ export async function getOneExpenditure(req: AuthenticatedRequest, res: Response
      //on convertit ce qui doit être convertit 
     //Ce qui vient du token est de la route est au format string, on veut des number 
      const expenditure_id_for_db = Number(expenditure_id)
-<<<<<<< HEAD
-    
-=======
->>>>>>> 694ba15158842d34226b8a9e2a22bd841fccf4dd
 
     //On récupère l'id de l'utilisateur dans le token
     const user_id_for_db = getUserIdInToken(req);
