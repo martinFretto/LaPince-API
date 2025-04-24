@@ -4,7 +4,7 @@ import pkg from 'pg';
 const { Pool } = pkg;
 
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ path: '.env.test' });
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -15,8 +15,9 @@ const pool = new Pool({
     port: parseInt(process.env.PG_PORT || "5432"), */
   });
 
+
+
 beforeEach(async () => {
-  // Réinitialisation : suppression + recréation des tables
   await pool.query(`TRUNCATE TABLE "user", "budget" RESTART IDENTITY CASCADE;`);
 
   // Seeding : ajout de données de test
@@ -36,6 +37,5 @@ VALUES ('alimentation', 600, 0, 700, 1),
 });
 
 afterAll(async () => {
-  // Fermeture de la connexion après les tests
   await pool.end();
 });

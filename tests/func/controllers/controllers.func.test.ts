@@ -280,7 +280,6 @@ describe('testing createBudget from budgetController', () => {
     });
 });
 
-
 const tokenPayload2: TokenPayloadType ={
     id: 3,
     email: "johnny@gmail.com"
@@ -337,3 +336,5 @@ describe('testing createExpenditure from expenditureController', () => {
         expect(response.json).toHaveBeenCalledWith({ status: 201, message: "Dépense créée"});
     });
 });
+
+

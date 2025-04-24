@@ -12,11 +12,11 @@ const db = new Pool({
     database:  process.env.PG_NAME,
     password:  process.env.PG_PASSWORD,
     port: parseInt(process.env.PG_PORT || "5432"), */
-    ssl: {
+   /* ssl: {
 
       rejectUnauthorized: false, // Nécessaire pour Render
 
-    },
+    },*/
   });
   
   db.connect()
