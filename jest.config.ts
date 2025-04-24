@@ -8,7 +8,7 @@ export default {
       tsconfig: 'tsconfig.test.json'
     },
   },
-  setupFilesAfterEnv: ['./tests/func/setup-jest.ts'],
+//  setupFilesAfterEnv: ['./tests/func/setup-jest.ts'],
 };
 
 

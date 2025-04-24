@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
-import { loginUser, registerUser } from "../../../src/controllers/authController";
 import {describe, expect, test, jest} from '@jest/globals';
 import { generateToken } from "../../../src/libs/jwtToken";
 import { createExpenditure } from "../../../src/controllers/expenditureController";
 import { TokenPayloadType } from "../../../src/types/TokenPayloadType";
-import { createBudget } from "../../../src/controllers/budgetController";
+import '../global-setup-jest';
 
 const tokenPayload2: TokenPayloadType ={
     id: 3,

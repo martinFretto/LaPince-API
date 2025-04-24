@@ -2,7 +2,11 @@ import pkg from 'pg';
 const { Pool } = pkg;
 import dotenv from "dotenv";
 
-dotenv.config();
+if (process.env.NODE_ENV === 'test') {
+  dotenv.config({ path: '.env.test' });
+} else {
+  dotenv.config(); // équivalent de dotenv.config({ path: '.env' })
+}
 
 // Configuration du pool de connexions
 const db = new Pool({
