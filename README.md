@@ -29,5 +29,5 @@ Si vous voulez lancer les tests:<br>
 2 - Créer un fichier .env.test sur le modèle de .env.test.example<br>
 3 - Créer une base de données en local avec les données que vous aurez renseignées dans le .env.test
     (PG_USER PG_HOST PG_NAME PG_PASSWORD PG_PORT, et DATABASE_URL qui découle des autres données)<br>
-4 - Créer les tables de la BDD avec la commande psql -U <PG_USER> - d <PG_NAME> -f ./data/create_sql (commande à éxécuter en se plaçant à la racine du projet pour avoir accès au fichier create_data.sql) <br>
+4 - Créer les tables de la BDD avec la commande psql -U <PG_USER> -d <PG_NAME> -f ./data/create_sql (commande à éxécuter en se plaçant à la racine du projet pour avoir accès au fichier create_data.sql) <br>
 5 - A la racine du projet, lancer la commande: npm run test:func
