@@ -22,7 +22,7 @@ CREATE TABLE "budget" (
     "spent_amount" DECIMAL(10,2) NOT NULL DEFAULT 0,
     "allocated_amount" DECIMAL(10,2) NOT NULL DEFAULT 0,
     "color" VARCHAR(255),
-    "icon" MEDIUMTEXT,
+    "icon" TEXT,
     "user_id" INT NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
     "created_at" TIMESTAMPTZ NOT NULL default(NOW()),
     "updated_at" TIMESTAMPTZ NOT NULL default(NOW())
