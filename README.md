@@ -13,7 +13,7 @@
 ## Pour démarrer l'appli avec Docker 
 
 On se passe de l'étape 2 car les dépendances seront installées grâce au Dockerfile du conteneur node
-On se passe des étapes 4 et 5, ca la base de données et ses tables sont créées grâce aux instruction du docker-compose.yml<br>
+On se passe des étapes 4 et 5, car la base de données et ses tables sont créées grâce aux instructions du docker-compose.yml<br>
 
 Pour résumer, on a:<br>
 1 - git clone du projet en local<br>
