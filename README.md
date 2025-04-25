@@ -17,7 +17,7 @@ On se passe des étapes 4 et 5, car la base de données et ses tables sont cré�
 
 Pour résumer, on a:<br>
 1 - git clone du projet en local<br>
-2 - créer un fichier .env sur le modèle du .env.example<br>
+2 - créer un fichier .env sur le modèle du .env.example(ATTENTION, pour PG_HOST, il faut mettre lapince_db et pas localhost, et aussi dans le DATABASE_URL, remplacer localhost par lapince_db, c'est le nom du conteneur postgres).<br> 
 3 - Lancer la commande docker compose up --build<br>
 
 Pour accéder à la BDD du conteneur: docker exec -it <NOM_DU_CONTENEUR_PG> psql -U <PG_USER> -d <PG_NAME>
