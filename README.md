@@ -20,7 +20,7 @@ Pour résumer, on a:<br>
 2 - créer un fichier .env sur le modèle du .env.example(ATTENTION, pour PG_HOST, il faut mettre lapince_db et pas localhost, et aussi dans le DATABASE_URL, remplacer localhost par lapince_db, c'est le nom du conteneur postgres).<br> 
 3 - Lancer la commande docker compose up --build<br>
 
-Pour accéder à la BDD du conteneur: docker exec -it <NOM_DU_CONTENEUR_PG> psql -U <PG_USER> -d <PG_NAME>
+Pour accéder à la BDD du conteneur postgres en cours d'éxécution: docker exec -it <NOM_DU_CONTENEUR_PG> psql -U <PG_USER> -d <PG_NAME>
 
 ## Lancement des tests
 
@@ -29,5 +29,5 @@ Si vous voulez lancer les tests:<br>
 2 - Créer un fichier .env.test sur le modèle de .env.test.example<br>
 3 - Créer une base de données en local avec les données que vous aurez renseignées dans le .env.test
     (PG_USER PG_HOST PG_NAME PG_PASSWORD PG_PORT, et DATABASE_URL qui découle des autres données)<br>
-4 - Créer les lables de la BDD avec la commande psql -U <PG_USER> - d <PG_NAME> -f ./data/create_sql (commande à éxécuter en se plaçant à la racine du projet pour avoir accès au fichier create_data.sql) <br>
+4 - Créer les tables de la BDD avec la commande psql -U <PG_USER> - d <PG_NAME> -f ./data/create_sql (commande à éxécuter en se plaçant à la racine du projet pour avoir accès au fichier create_data.sql) <br>
 5 - A la racine du projet, lancer la commande: npm run test:func
