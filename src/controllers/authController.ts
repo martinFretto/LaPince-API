@@ -16,9 +16,9 @@ export async function registerUser(req: Request, res: Response) {
 
     if (error) {
         res.status(400).json({
-            message: "Validation échouée !",
-            details: error.details.map((detail)=>detail.message)
-        });
+            status: 400,
+            message: error.details.map((detail)=>detail.message).join(' ')
+        });         
         return;
     }
 

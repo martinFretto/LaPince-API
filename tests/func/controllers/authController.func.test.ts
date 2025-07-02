@@ -4,11 +4,29 @@ import { loginUser, registerUser } from "../../../src/controllers/authController
 import '../auth-setup-jest';
 
 describe('testing registerUser from authController', () => {
-    test('Valid data returns 201 with message: Utilisateur créé', async()=>{
+    test('Valid data (password: 2eTapaovnezdjnj) returns 201 with message: Utilisateur créé', async()=>{
         const request = {
             body:  {
                 email: "test@oclock.io",
                 password: "2eTapaovnezdjnj"
+            }
+        } as Partial<Request>;
+
+        const response = {
+            status: jest.fn().mockReturnThis(),
+            json: jest.fn()
+        } as Partial<Response>;
+
+        await registerUser(request as Request, response as Response);
+       expect(response.status).toHaveBeenCalledWith(201);
+       expect(response.json).toHaveBeenCalledWith({ status: 201, message: "Utilisateur créé"});
+       //expect(response).toEqual({ status: 201, message: 'Utilisateur créé'})
+    });
+    test('Valid data (password: XXX---111) returns 201 with message: Utilisateur créé', async()=>{
+        const request = {
+            body:  {
+                email: "test@oclock.io",
+                password: "XXX---111"
             }
         } as Partial<Request>;
 

@@ -13,7 +13,7 @@ export const registerSchema = Joi.object({
         
     }),
     password: Joi.string()
-        .pattern(/^(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]{8,}$/)
+        .pattern(/^(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9\-!@#$%^&*()_+=]{8,}$/)
         .required()
         .empty('')
         .messages({
