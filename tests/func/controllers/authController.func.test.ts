@@ -20,7 +20,6 @@ describe('testing registerUser from authController', () => {
         await registerUser(request as Request, response as Response);
        expect(response.status).toHaveBeenCalledWith(201);
        expect(response.json).toHaveBeenCalledWith({ status: 201, message: "Utilisateur créé"});
-       //expect(response).toEqual({ status: 201, message: 'Utilisateur créé'})
     });
     test('Valid data (password: XXX---111) returns 201 with message: Utilisateur créé', async()=>{
         const request = {
@@ -38,7 +37,6 @@ describe('testing registerUser from authController', () => {
         await registerUser(request as Request, response as Response);
        expect(response.status).toHaveBeenCalledWith(201);
        expect(response.json).toHaveBeenCalledWith({ status: 201, message: "Utilisateur créé"});
-       //expect(response).toEqual({ status: 201, message: 'Utilisateur créé'})
     });
     test('Already existing email returns 409 with message:  "Cet email est déjà utilisé!', async()=>{
         const request = {

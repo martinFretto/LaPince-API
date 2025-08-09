@@ -2,10 +2,8 @@ import { Request, Response } from "express";
 import argon2 from "argon2";
 import { UserDatamapper } from "../datamappers/UserDatamapper";
 import { getUserIdInToken } from "../libs/jwtToken";
+import { AuthenticatedRequest } from "../types/AuthenticatedRequest";
 
-    interface AuthenticatedRequest extends Request {
-        token?: string;
-    }
 
     export async function getUserInfo(req: AuthenticatedRequest, res: Response): Promise<void> {
         const user_id = getUserIdInToken(req);
@@ -32,7 +30,7 @@ import { getUserIdInToken } from "../libs/jwtToken";
         const user_id = getUserIdInToken(req);
         const { email, first_name, last_name } = req.body;
 
-        const updatedUser = await UserDatamapper.update({
+        const updatedUser = await UserDatamapper.updateById({
             id: user_id,
             email,
             first_name,
@@ -75,7 +73,7 @@ import { getUserIdInToken } from "../libs/jwtToken";
 
         // Hashage du nouveau mot de passe avec argon2
         const hashedPassword = await argon2.hash(new_password);
-        const updatedUser = await UserDatamapper.update({ id: user.id, password: hashedPassword });
+        const updatedUser = await UserDatamapper.updateById({ id: user.id, password: hashedPassword });
 
         if (!updatedUser) {
             res.status(500).json({ status: 500, message: "Erreur lors de la modification du mot de passe." });

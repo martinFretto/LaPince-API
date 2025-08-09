@@ -3,21 +3,20 @@ import { getUserIdInToken } from "../libs/jwtToken";
 import { BudgetDatamapper } from "../datamappers/BudgetDatamapper";
 import { BudgetObject } from "../types/ModelTypes";
 import { budgetSchema } from "../libs/validationSchemas";
+import { AuthenticatedRequest } from "../types/AuthenticatedRequest";
 
-interface AuthenticatedRequest extends Request {
-    token?: string;
-}
 
 export async function getAllBudgets(req: AuthenticatedRequest, res: Response): Promise<void> {
     const user_id_for_db = getUserIdInToken(req);
 
     const budgets = await BudgetDatamapper.findByUser(user_id_for_db);
+    console.log("BUDGETS: ", budgets)
 
     if (budgets?.length) {
         res.status(200).json({ status: 200, data: budgets });
         return;
     } else {
-        res.status(404).json({ status: 404, message: "Aucun budget trouvé pour cet utilisateur." });
+        res.status(204).json({ status: 204, message: "Aucun budget trouvé pour cet utilisateur." });
         return;
     }
 }

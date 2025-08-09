@@ -3,18 +3,12 @@ import { ExpenditureObject } from "../types/ModelTypes";
 import { ExpenditureDatamapper } from "../datamappers/ExpenditureDatamapper";
 import { getUserIdInToken } from "../libs/jwtToken";
 import { amountSchema } from "../libs/validationSchemas";
+import { AuthenticatedRequest } from "../types/AuthenticatedRequest";
 
-interface AuthenticatedRequest extends Request {
-    token?: string;
-}
 
 export async function getAllExpenditures(req: AuthenticatedRequest, res: Response): Promise<void> {
-    
-    //budget_id sera undefined (ou null) dans la requête pour le dashboard"
-    //budget_id aura une valeur dans la requête pour les dépenses"
     const { budgetId } = req.query;
 
-    //On récupère l'id de l'utilisateur dans le token
     const user_id_for_db = getUserIdInToken(req);
     
     let expenditures; 
@@ -33,7 +27,7 @@ export async function getAllExpenditures(req: AuthenticatedRequest, res: Respons
          res.status(404).json({status: 404, message: "Aucune dépense" });
          return;
      }
- }
+}
 
 export async function getOneExpenditure(req: AuthenticatedRequest, res: Response): Promise<void> {
      //le budget_id se trouve dans le endpoint (route paramétrée) "/expenses"
@@ -59,12 +53,9 @@ export async function getOneExpenditure(req: AuthenticatedRequest, res: Response
 
 export async function createExpenditure(req: AuthenticatedRequest, res: Response): Promise<void> {
     
-    //On récupère l'id de l'utilisateur dans le token
     const user_id_for_db = getUserIdInToken(req);
 
-    //le reste est dans le body
     const { budget_id, description, payment_method, amount, date} = req.body;
-
 
     const amount_for_db = 
     typeof amount === "string" 
@@ -103,10 +94,8 @@ export async function createExpenditure(req: AuthenticatedRequest, res: Response
 
     if(newExpenditure){
         res.status(201).json({ status: 201, message: "Dépense créée"});
-    return;
     } else {
         res.status(500).json({status:500, message: "Une erreur est survenue lors de l'enregistrement' de la dépense" });
-        return;
     }
 }
 
@@ -135,22 +124,15 @@ export async function updateExpenditure(req: AuthenticatedRequest, res: Response
     const { expenditure_id} = req.params;
     const expenditure_id_for_db = Number(expenditure_id)
 
-    //On récupère l'id de l'utilisateur dans le token
     const user_id_for_db = getUserIdInToken(req);
-    console.log("USERID?: ", user_id_for_db)
 
     const expenditure = await ExpenditureDatamapper.findById(expenditure_id_for_db, user_id_for_db);
 
-
     const { description, payment_method, amount, date} = req.body;
-    console.log("REQUEST BODY: description, payment_method, amount, date ", description, payment_method, amount, date)
     
     const amount_for_db = 
-    typeof amount === "string" 
-    ? Number(amount.replace(',', '.')) 
-    : amount;
+    typeof amount === "string" ? Number(amount.replace(',', '.')) : amount;
 
-    //Vérification de la validité du montant, réponse 400 avec un message personnalisé en cas d'échec
     const {error} = amountSchema.validate(amount_for_db);
     if (error) {
         res.status(400).json({
@@ -180,9 +162,7 @@ export async function updateExpenditure(req: AuthenticatedRequest, res: Response
 
         const updatedExpenditure = await ExpenditureDatamapper.update(expenditureData);
         res.status(201).json({ status: 200, message: "dépense modifiée", data: updatedExpenditure});
-        return;
     } else {
         res.status(404).json({status: 404, message: "Cette dépense est introuvable" });
-         return;
     }    
 }

@@ -5,8 +5,8 @@ info:
   version: 1.0.0
 
 servers:
-  - url: https://projet-la-pince-back-1.onrender.com
-    description: Serveur de production
+  - url: http://localhost:3000
+    description: En local
   
 
 paths:

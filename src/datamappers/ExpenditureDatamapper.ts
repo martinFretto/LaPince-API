@@ -133,7 +133,7 @@ class ExpenditureDatamapper {
                 dataObj.id
             ],
         };
-        console.log("UPDATE REQUEST: ", query)
+
         const result = await db.query(query);
         // biome-ignore lint/complexity/noThisInStatic: <explanation>
         await this.updateBudgetAndUserAfterExpenditure(dataObj.user_id, dataObj.budget_id);

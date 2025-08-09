@@ -15,7 +15,6 @@ export async function verify(hashedPassword: string, inputPassword: string): Pro
         const isCorrect = await argon2.verify(hashedPassword, inputPassword);
         return isCorrect;
       } catch (err) {
-        console.log("err?: ", err)
         return "error";
       }
 }

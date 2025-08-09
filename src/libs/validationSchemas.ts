@@ -17,7 +17,8 @@ export const registerSchema = Joi.object({
         .required()
         .empty('')
         .messages({
-            "string.pattern.base": "Le mot de passe doit contenir au moins 8 caractères, dont 1 chiffre et 1 majuscule.",
+            "string.pattern.base": 
+            "Le mot de passe doit contenir au moins 8 caractères, dont 1 chiffre et 1 majuscule.",
             "any.required": "Le champ password est obligatoire.",
             "string.empty":"Le champ password est obligatoire."
         }),
@@ -28,7 +29,7 @@ export const registerSchema = Joi.object({
 });
 
 //Création d'un schéma: format de données pour l'email et le password
-export const loginSchema = Joi.object({
+/* export const loginSchema = Joi.object({
     email: Joi.string().email().empty('').required().messages({
         "string.email": "Le format de l'email est invalide.",
         "any.required": "Le champ email est obligatoire.",
@@ -38,7 +39,7 @@ export const loginSchema = Joi.object({
         "any.required": "Le champ password est obligatoire.",
         "string.empty": "Le champ email est obligatoire."
     })
-});
+});*/
 
 //Création d'un schéma pour le montant (on veut un nombre positif à maximum deux chiffres après la virgule)
 //En principe, la conversion du montant avec Number() a déjà réduit le nombre de chiffre après la virgule à 2

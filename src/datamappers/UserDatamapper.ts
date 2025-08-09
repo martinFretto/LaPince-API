@@ -63,7 +63,7 @@ class UserDatamapper {
 
         return user;
     }
-    static async update(dataObj: Partial<UserObject>): Promise<User | null> {
+    static async updateById(dataObj: Partial<UserObject>): Promise<User | null> {
         const query = {
             text: `
                 UPDATE "user"
@@ -82,8 +82,35 @@ class UserDatamapper {
                 dataObj.id,
             ],
         };
-    
+        
         const result = await db.query(query);
+        console.log("résultats")
+    
+        if (!result.rowCount) {
+            return null;
+        }
+    
+        return new User(result.rows[0]);
+    }
+
+    static async updateByEmail(dataObj: Partial<UserObject>): Promise<User | null> {
+        console.log("update user datamapper")
+        const query = {
+            text: `
+                UPDATE "user"
+                SET
+                    password = $1
+                WHERE email = $2
+                RETURNING *;`,
+            values: [
+                dataObj.password || null,
+
+                dataObj.email || null,
+            ],
+        };
+        
+        const result = await db.query(query);
+        console.log("résultats: ", result)
     
         if (!result.rowCount) {
             return null;

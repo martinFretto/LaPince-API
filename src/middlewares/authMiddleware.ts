@@ -4,15 +4,17 @@ import { AuthenticatedRequest } from "../types/AuthenticatedRequest";
 
 
 export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  
     //Vérification de la présence du token dans les headers
-    const token = req.headers?.["authorization"]?.split("Bearer ")[1];
-    console.log("token: ", token);
+   // const token = req.headers?.["authorization"]?.split("Bearer ")[1];
+    const token = req.cookies.token;
+
+    console.log("token??: ", token);
+
     if (!token) {  
       res.status(401).json({ status: 401, message: "Cette route n'est pas accessible sans token" }); 
       return;
     }
-   
+    
     //Vérification de la validité du token
     const decodedToken = verifyJwtToken(token);
     if (! decodedToken) { 
