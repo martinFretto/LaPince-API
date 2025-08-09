@@ -8,8 +8,6 @@ export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: N
    // const token = req.headers?.["authorization"]?.split("Bearer ")[1];
     const token = req.cookies.token;
 
-    console.log("token??: ", token);
-
     if (!token) {  
       res.status(401).json({ status: 401, message: "Cette route n'est pas accessible sans token" }); 
       return;

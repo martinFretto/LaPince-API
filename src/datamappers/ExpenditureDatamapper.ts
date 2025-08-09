@@ -26,11 +26,13 @@ class ExpenditureDatamapper {
             return expenditure;
     }
 
-    static async findByBudget(budget_id: number, user_id: number): Promise<Expenditure[]|null> {
+    static async findByBudget(budget_id: number, user_id: number): Promise<ExpenditureWithDetails[]|null> {
         //Le Budget_ID est suffisant pour la requête
         //Mais on vérifie que le budget appartient bien à l'utilisateur authentifié
         const query = {
-            text: `SELECT * FROM "expenditure" WHERE budget_id= $1 and user_id= $2 ORDER BY date DESC;`,
+            text: `SELECT expenditure.id, expenditure.budget_id, date, description, amount, budget.color, budget.icon FROM expenditure
+            JOIN BUDGET on budget.id = expenditure.budget_id
+            WHERE budget_id= $1 and expenditure.user_id= $2 ORDER BY date DESC;`,
             values: [budget_id, user_id],
         };
 
@@ -41,16 +43,31 @@ class ExpenditureDatamapper {
         }
 
         // On va construire un tableau de dépenses
-        const expenditures= [];
+     /*   const expenditures= [];
+
 
         for (let i = 0; i < results.rows.length; i++) {
             // on instancie un level à chaque tour de boucle
             const expenditure = new Expenditure(results.rows[i]);
 
             expenditures.push(expenditure);
+        }*/
+
+         // On va construire un tableau de dépenses avec icon et color
+        const expendituresWithDetails= [];
+
+        for (let i = 0; i < results.rows.length; i++) {
+            // on instancie un level à chaque tour de boucle
+            const expenditureWithDetails:ExpenditureWithDetails = {
+                expenditure: new Expenditure(results.rows[i]),
+                budgetColor: results.rows[i].color,
+                budgetIcon: results.rows[i].icon
+            }               
+            
+            expendituresWithDetails.push(expenditureWithDetails);
         }
 
-        return expenditures;
+        return expendituresWithDetails;
     }
 
     static async findAllWithIconAndColor(user_id: number): Promise<ExpenditureWithDetails[]|null> {

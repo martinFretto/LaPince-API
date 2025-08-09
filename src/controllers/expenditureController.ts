@@ -7,24 +7,28 @@ import { AuthenticatedRequest } from "../types/AuthenticatedRequest";
 
 
 export async function getAllExpenditures(req: AuthenticatedRequest, res: Response): Promise<void> {
+    
     const { budgetId } = req.query;
 
     const user_id_for_db = getUserIdInToken(req);
-    
+    console.log("dépenses pr le budget: ", budgetId);
     let expenditures; 
 
     if(budgetId){
         const budget_id_for_db = Number(budgetId)
         expenditures = await ExpenditureDatamapper.findByBudget(budget_id_for_db, user_id_for_db);
     } else{
+        console.log("findwith icon and color")
         expenditures = await ExpenditureDatamapper.findAllWithIconAndColor(user_id_for_db);
     }
+
+    console.log("resultat: ", expenditures);
  
     if(expenditures?.length){
          res.status(200).json({ status: 200, data: expenditures});
          return;
      } else {
-         res.status(404).json({status: 404, message: "Aucune dépense" });
+         res.status(204).json({ status: 204, message: "Aucune dépense trouvé pour cet utilisateur." });
          return;
      }
 }
