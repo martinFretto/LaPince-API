@@ -42,17 +42,6 @@ class ExpenditureDatamapper {
             return null;
         }
 
-        // On va construire un tableau de dépenses
-     /*   const expenditures= [];
-
-
-        for (let i = 0; i < results.rows.length; i++) {
-            // on instancie un level à chaque tour de boucle
-            const expenditure = new Expenditure(results.rows[i]);
-
-            expenditures.push(expenditure);
-        }*/
-
          // On va construire un tableau de dépenses avec icon et color
         const expendituresWithDetails= [];
 

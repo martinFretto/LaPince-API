@@ -11,7 +11,6 @@ export async function getAllExpenditures(req: AuthenticatedRequest, res: Respons
     const { budgetId } = req.query;
 
     const user_id_for_db = getUserIdInToken(req);
-    console.log("dépenses pr le budget: ", budgetId);
     let expenditures; 
 
     if(budgetId){
@@ -56,7 +55,6 @@ export async function getOneExpenditure(req: AuthenticatedRequest, res: Response
 }
 
 export async function createExpenditure(req: AuthenticatedRequest, res: Response): Promise<void> {
-    
     const user_id_for_db = getUserIdInToken(req);
 
     const { budget_id, description, payment_method, amount, date} = req.body;

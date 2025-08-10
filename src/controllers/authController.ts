@@ -60,7 +60,7 @@ export async function loginUser(req: Request, res: Response): Promise<void> {
     const user = await UserDatamapper.findByEmail(email);
     if (! user) {
         //Ici l'email n'existe pas dans la BDD. Pour des raisons de sécurité, on ne le précisera pas dans la réponse
-        res.status(401).json({ status: 401, message: "Il y a une erreur dans vos identifiants" }); 
+        res.status(401).json({ status: 401, message: "Il y a une erreur dans vos identifiants." }); 
         return;
     }
 
@@ -70,11 +70,11 @@ export async function loginUser(req: Request, res: Response): Promise<void> {
     const correctPassword = await verify(user!.password, password);
     if (typeof correctPassword === "boolean") {
         if(!correctPassword){
-            res.status(401).json({ status: 401, message: "Il y a une erreur dans vos identifiants" }); 
+            res.status(401).json({ status: 401, message: "Il y a une erreur dans vos identifiants." }); 
             return;
         }
     } else {
-        res.status(500).json({ status: 500, message: "Une erreur est survenue lors de la vérification du mot de passe" });
+        res.status(500).json({ status: 500, message: "Une erreur est survenue lors de la vérification du mot de passe." });
         return; 
     }
 
