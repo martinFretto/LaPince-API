@@ -17,11 +17,8 @@ export async function getAllExpenditures(req: AuthenticatedRequest, res: Respons
         const budget_id_for_db = Number(budgetId)
         expenditures = await ExpenditureDatamapper.findByBudget(budget_id_for_db, user_id_for_db);
     } else{
-        console.log("findwith icon and color")
         expenditures = await ExpenditureDatamapper.findAllWithIconAndColor(user_id_for_db);
     }
-
-    console.log("resultat: ", expenditures);
  
     if(expenditures?.length){
          res.status(200).json({ status: 200, data: expenditures});
@@ -165,6 +162,6 @@ export async function updateExpenditure(req: AuthenticatedRequest, res: Response
         const updatedExpenditure = await ExpenditureDatamapper.update(expenditureData);
         res.status(201).json({ status: 200, message: "dépense modifiée", data: updatedExpenditure});
     } else {
-        res.status(404).json({status: 404, message: "Cette dépense est introuvable" });
+        res.status(404).json({status: 404, message: "Echec de la modification de la dépense." });
     }    
 }

@@ -95,7 +95,7 @@ export async function loginUser(req: Request, res: Response): Promise<void> {
     });
   
   //  res.status(201).json({ status: 201, message: "token généré", token: jwtToken});
-    res.status(201).json({ status: 201, message: "token généré"});
+    res.status(201).json({ status: 201, data: user});
     return;
 }
 
@@ -172,7 +172,7 @@ export async function setNewPassword(req: Request, res: Response): Promise<void>
         password: hashedPassword,
     };
 
-    const updatedUser = await UserDatamapper.updateByEmail(updateData);
+    const updatedUser = await UserDatamapper.updatePasswordWithEmail(updateData);
 
     if(updatedUser){
         res.status(201).json({ status: 201});

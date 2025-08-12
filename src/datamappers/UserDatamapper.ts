@@ -4,7 +4,7 @@ import { UserObject } from "../types/ModelTypes";
 
 // biome-ignore lint/complexity/noStaticOnlyClass: <explanation>
 class UserDatamapper {
-    static async findByEmail(email: string): Promise<null|User> {
+    static async findByEmail(email: string): Promise<null|User> {  //Utilisé au register pour savoir si l'email est déjà utilisé
         const query = {
             text: 'SELECT * FROM "user" WHERE email = $1',
             values: [email],
@@ -21,7 +21,7 @@ class UserDatamapper {
         return user;
     }
 
-    static async findById(id: number): Promise<User | null> {
+    static async findById(id: number): Promise<User | null> { //utilisé pour la page de profil
         const query = {
             text: 'SELECT * FROM "user" WHERE id = $1;',
             values: [id],
@@ -63,28 +63,27 @@ class UserDatamapper {
 
         return user;
     }
-    static async updateById(dataObj: Partial<UserObject>): Promise<User | null> {
+    static async updateById(dataObj: Partial<UserObject>): Promise<User | null> { //utilisé pour éditer la page de profil
         const query = {
             text: `
                 UPDATE "user"
                 SET
                     first_name = COALESCE($1, first_name),
                     last_name = COALESCE($2, last_name),
-                    email = COALESCE($3, email),
-                    password = COALESCE($4, password)
+                    password = COALESCE($3, password),
+                    total_budget = COALESCE($4, total_budget)
                 WHERE id = $5
                 RETURNING *;`,
             values: [
                 dataObj.first_name || null,
                 dataObj.last_name || null,
-                dataObj.email || null,
                 dataObj.password || null,
+                dataObj.total_budget || null,
                 dataObj.id,
             ],
         };
         
         const result = await db.query(query);
-        console.log("résultats")
     
         if (!result.rowCount) {
             return null;
@@ -93,8 +92,7 @@ class UserDatamapper {
         return new User(result.rows[0]);
     }
 
-    static async updateByEmail(dataObj: Partial<UserObject>): Promise<User | null> {
-        console.log("update user datamapper")
+    static async updatePasswordWithEmail(dataObj: Partial<UserObject>): Promise<User | null> { //utilisé à la réinitialisation du mot de passe
         const query = {
             text: `
                 UPDATE "user"
@@ -110,7 +108,6 @@ class UserDatamapper {
         };
         
         const result = await db.query(query);
-        console.log("résultats: ", result)
     
         if (!result.rowCount) {
             return null;
@@ -119,7 +116,7 @@ class UserDatamapper {
         return new User(result.rows[0]);
     }
     
-    static async delete(user: User): Promise<boolean> {
+/*    static async delete(user: User): Promise<boolean> {
         try {
             const query = {
                 text: `DELETE FROM "user" WHERE id = $1;`,
@@ -129,10 +126,9 @@ class UserDatamapper {
             await db.query(query);
             return true;
         } catch (error) {
-            console.error("Erreur dans delete :", error);
             return false;
         }
-    }
+    }*/
 }
 
 export {UserDatamapper}

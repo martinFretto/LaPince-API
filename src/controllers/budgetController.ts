@@ -10,7 +10,6 @@ export async function getAllBudgets(req: AuthenticatedRequest, res: Response): P
     const user_id_for_db = getUserIdInToken(req);
 
     const budgets = await BudgetDatamapper.findByUser(user_id_for_db);
-    console.log("BUDGETS: ", budgets)
 
     if (budgets?.length) {
         res.status(200).json({ status: 200, data: budgets });
@@ -53,8 +52,8 @@ const allocated_amount_for_db =
     : allocated_amount
 
     if (warning_amount_for_db >= allocated_amount_for_db) {
-        res.status(400).json({
-            message: "Le montant d'alerte  doit être inférieur au montant alloué ."
+        res.status(422).json({
+            message: "Le seuil d'alerte doit être inférieur au montant alloué."
         });
         return;
     }
@@ -105,8 +104,8 @@ export async function updateBudget(req: AuthenticatedRequest, res: Response): Pr
     }
 
     if (warning_amount >= allocated_amount) {
-        res.status(400).json({
-            message: "Le montant d'alerte  doit être inférieur au montant alloué ."
+        res.status(422).json({
+            message: "Le seuil d'alerte doit être inférieur au montant alloué."
         });
         return;
     }

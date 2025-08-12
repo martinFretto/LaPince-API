@@ -5,36 +5,28 @@ import { getUserIdInToken } from "../libs/jwtToken";
 import { AuthenticatedRequest } from "../types/AuthenticatedRequest";
 
 
-    export async function getUserInfo(req: AuthenticatedRequest, res: Response): Promise<void> {
-        const user_id = getUserIdInToken(req);
-        const user = await UserDatamapper.findById(user_id);
+export async function getUserInfo(req: AuthenticatedRequest, res: Response): Promise<void> {
 
-        if (!user) {
-            res.status(404).json({ status: 404, message: "Utilisateur introuvable." });
-            return;
-        }
-
-        res.status(200).json({
-            id: user.id,
-            email: user.email,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            total_budget: user.total_budget,
-            total_expenses: user.total_expenses,
-            created_at: user.created_at,
-            updated_at: user.updated_at,
-        });
+    const user_id = getUserIdInToken(req);
+    const user = await UserDatamapper.findById(user_id);
+        
+    if (!user) {
+        res.status(404).json({ status: 404, message: "Utilisateur introuvable." });
+        return;
     }
+    res.status(200).json({ status: 200, data: user});
+}
 
     export async function updateUserProfile(req: AuthenticatedRequest, res: Response): Promise<void> {
         const user_id = getUserIdInToken(req);
-        const { email, first_name, last_name } = req.body;
+        const { email, first_name, last_name, total_budget } = req.body;
 
         const updatedUser = await UserDatamapper.updateById({
             id: user_id,
             email,
             first_name,
             last_name,
+            total_budget
         });
 
         if (!updatedUser) {
@@ -53,36 +45,7 @@ import { AuthenticatedRequest } from "../types/AuthenticatedRequest";
         });
     }
 
-    export async function updatePassword(req: AuthenticatedRequest, res: Response): Promise<void> {
-        const user_id = getUserIdInToken(req);
-        const { current_password, new_password } = req.body;
-
-        const user = await UserDatamapper.findById(user_id);
-
-        if (!user) {
-            res.status(404).json({ status: 404, message: "Utilisateur introuvable." });
-            return;
-        }
-
-        // Vérification du mot de passe actuel avec argon2
-        const passwordMatches = await argon2.verify(user.password, current_password);
-        if (!passwordMatches) {
-            res.status(400).json({ status: 400, message: "Mot de passe actuel incorrect." });
-            return;
-        }
-
-        // Hashage du nouveau mot de passe avec argon2
-        const hashedPassword = await argon2.hash(new_password);
-        const updatedUser = await UserDatamapper.updateById({ id: user.id, password: hashedPassword });
-
-        if (!updatedUser) {
-            res.status(500).json({ status: 500, message: "Erreur lors de la modification du mot de passe." });
-            return;
-        }
-
-        res.status(200).json({ success: true });
-    }
-
+/*
     export async function deleteUser(req: AuthenticatedRequest, res: Response): Promise<void> {
         const user_id = getUserIdInToken(req);
         const user = await UserDatamapper.findById(user_id);
@@ -100,4 +63,4 @@ import { AuthenticatedRequest } from "../types/AuthenticatedRequest";
         }
 
         res.status(200).json({ success: true });
-    }
+    }*/

@@ -39,6 +39,7 @@ class BudgetDatamapper {
 
     // Crée un nouveau budget dans la base de données.
     static async create(dataObj: BudgetObject): Promise<Budget | null> {
+        console.log("datamapper ajout budget: ", dataObj);
         const query = {
             text: `
                 INSERT INTO "budget" (name, warning_amount, allocated_amount, color, icon, user_id)

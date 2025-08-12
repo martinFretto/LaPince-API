@@ -10,8 +10,8 @@ userRouter.get("/me", authMiddleware,catchErrors(userController.getUserInfo));
 
 userRouter.patch("/me", authMiddleware, catchErrors(userController.updateUserProfile));
 
-userRouter.patch("/me/password", authMiddleware,catchErrors(userController.updatePassword));
+//userRouter.patch("/me/password", authMiddleware,catchErrors(userController.updatePassword));
 
-userRouter.delete("/me", authMiddleware,catchErrors(userController.deleteUser));
+//userRouter.delete("/me", authMiddleware,catchErrors(userController.deleteUser));
 
 export {userRouter}

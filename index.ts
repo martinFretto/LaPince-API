@@ -34,7 +34,6 @@ app.use(notFound);
 
 app.listen(PORT, () =>{
     console.log("🚀 API démarrée sur http://localhost:3000");
- //   console.log("📄 Swagger UI disponible sur https://projet-la-pince-back-1.onrender.com/api-docs");
     console.log('Swagger docs at http://localhost:3000/api-docs');
 });
 

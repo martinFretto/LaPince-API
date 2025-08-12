@@ -22,7 +22,6 @@ export function verifyJwtToken(token: string) {
 	try {
 	  	return jwt.verify(token, process.env.JWT_SECRET as jwt.Secret);
 	} catch (error) {
-		console.log("erreur verification token");
 	  	console.error(error);
 	  	return null;
 	}
