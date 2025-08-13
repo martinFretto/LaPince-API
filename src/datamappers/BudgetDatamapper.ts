@@ -22,7 +22,6 @@ class BudgetDatamapper {
 
         // Trouve tous les budgets associés à un utilisateur.
     static async findByUser(user_id: number): Promise<Budget[] | null> {
-        console.log("userid datamapper: ", user_id)
         const query = {
             text: `SELECT * FROM "budget" WHERE user_id = $1;`,
             values: [user_id],
@@ -30,16 +29,13 @@ class BudgetDatamapper {
         const results = await db.query(query);
 
         if (!results.rowCount) {
-            console.log("pas de résultats")
             return null;
         }
-        console.log("résultats: ", results)
         return results.rows.map((row) => new Budget(row));
     }
 
     // Crée un nouveau budget dans la base de données.
     static async create(dataObj: BudgetObject): Promise<Budget | null> {
-        console.log("datamapper ajout budget: ", dataObj);
         const query = {
             text: `
                 INSERT INTO "budget" (name, warning_amount, allocated_amount, color, icon, user_id)

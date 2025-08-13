@@ -57,7 +57,6 @@ const allocated_amount_for_db =
         });
         return;
     }
-    
     const { error } = budgetSchema.validate({ name, warning_amount_for_db, allocated_amount_for_db, color, icon });
     if (error) {
         res.status(400).json({
@@ -109,7 +108,6 @@ export async function updateBudget(req: AuthenticatedRequest, res: Response): Pr
         });
         return;
     }
-
     const { error } = budgetSchema.validate({ name, color, icon });
     if (error) {
         res.status(400).json({

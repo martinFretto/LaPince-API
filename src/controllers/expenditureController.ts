@@ -24,7 +24,7 @@ export async function getAllExpenditures(req: AuthenticatedRequest, res: Respons
          res.status(200).json({ status: 200, data: expenditures});
          return;
      } else {
-         res.status(204).json({ status: 204, message: "Aucune dépense trouvé pour cet utilisateur." });
+         res.status(204).json({ status: 204, message: "Aucune dépense trouvée pour cet utilisateur." });
          return;
      }
 }
@@ -46,7 +46,7 @@ export async function getOneExpenditure(req: AuthenticatedRequest, res: Response
         res.status(200).json({ status: 200, data: expenditure});
         return;
     } else {
-        res.status(404).json({status: 404, message: "Cette dépense est introuvable" });
+        res.status(404).json({status: 404, message: "Cette dépense est introuvable." });
         return;
     }
 }
